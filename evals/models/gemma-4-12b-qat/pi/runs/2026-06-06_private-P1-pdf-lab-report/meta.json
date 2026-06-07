@@ -1,0 +1,56 @@
+{
+  "run_id": "2026-06-06_private-P1-pdf-lab-report",
+  "date": "2026-06-06",
+  "task": {
+    "type": "private-files",
+    "subtask": "P1",
+    "name": "PDF parsing via pdftotext (out-of-range count + LDL)",
+    "dataset_file": "labs/lab_report.pdf",
+    "grading": "exact-match",
+    "prompt_file": "prompt.md",
+    "answer_key": "bench/private-files/ANSWER_KEY.md"
+  },
+  "model": {
+    "id": "gemma-4-12b-qat",
+    "quant": "UD-Q4_K_XL (Unsloth Dynamic 2.0 GGUF, QAT)",
+    "runtime": "llama-server (local)",
+    "thinking": "off",
+    "sampling": "temp 0.3 / top_p 0.95 / top_k 64"
+  },
+  "harness": {
+    "tool": "pi",
+    "version": "0.78.1",
+    "session_file": "transcript.jsonl",
+    "source_session": "2026-06-07T03-23-47-400Z_019ea01b-a748-752e-b320-828668349432.jsonl",
+    "multi_task_session": true
+  },
+  "metrics": {
+    "wall_clock_seconds": 11,
+    "assistant_turns": 2,
+    "tool_calls_total": 1,
+    "tool_calls_by_type": {
+      "bash": 1
+    },
+    "prompt_input_tokens": 277,
+    "output_tokens_total": 72,
+    "final_total_tokens": 4285,
+    "peak_context_tokens": 4285,
+    "cost_usd": 0.0,
+    "speed_ref": "../../perf.json (prefill ~140, decode ~10.5 tok/s \u2014 estimated)"
+  },
+  "grading": {
+    "keys_total": 2,
+    "keys_correct_strict": 2,
+    "keys_correct_numeric": 2,
+    "pass_strict": true,
+    "pass_numeric": true,
+    "gold": {
+      "out_of_range_count": "5",
+      "ldl_value": "168"
+    },
+    "got": {
+      "out_of_range_count": "5",
+      "ldl_value": "168"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "run_id": "2026-06-06_dabench-hard-H5-abalone-ml",
+  "date": "2026-06-06",
+  "task": {
+    "type": "dabench-hard",
+    "subtask": "H5",
+    "name": "Feature Engineering + ML comparison (volume feature, RMSE)",
+    "dataset_file": "abalone.csv",
+    "grading": "exact-match (numeric)",
+    "prompt_file": "prompt.md",
+    "answer_key": "bench/dabench-hard/ANSWER_KEY.md"
+  },
+  "model": {
+    "id": "gemma-4-12b-qat",
+    "quant": "UD-Q4_K_XL (Unsloth Dynamic 2.0 GGUF, QAT)",
+    "runtime": "llama-server (local)",
+    "thinking": "off",
+    "sampling": "temp 0.3 / top_p 0.95 / top_k 64"
+  },
+  "harness": {
+    "tool": "pi",
+    "version": "0.78.1",
+    "session_file": "transcript.jsonl",
+    "source_session": "2026-06-07T03-23-47-400Z_019ea01b-a748-752e-b320-828668349432.jsonl",
+    "multi_task_session": true
+  },
+  "metrics": {
+    "wall_clock_seconds": 69,
+    "assistant_turns": 3,
+    "tool_calls_total": 2,
+    "tool_calls_by_type": {
+      "bash": 2
+    },
+    "prompt_input_tokens": 2005,
+    "output_tokens_total": 549,
+    "final_total_tokens": 3148,
+    "peak_context_tokens": 3148,
+    "cost_usd": 0.0,
+    "speed_ref": "../../perf.json (prefill ~140, decode ~10.5 tok/s \u2014 estimated)"
+  },
+  "grading": {
+    "keys_total": 3,
+    "keys_correct_strict": 3,
+    "keys_correct_numeric": 3,
+    "pass_strict": true,
+    "pass_numeric": true,
+    "gold": {
+      "correlation_coefficient": "0.9253",
+      "original_model_rmse": "2.2192",
+      "volume_feature_model_rmse": "2.2092"
+    },
+    "got": {
+      "correlation_coefficient": "0.9253",
+      "original_model_rmse": "2.2192",
+      "volume_feature_model_rmse": "2.2092"
+    }
+  }
+}

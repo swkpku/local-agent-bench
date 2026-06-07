@@ -1,0 +1,54 @@
+{
+  "run_id": "2026-06-06_growth-strategy-report",
+  "date": "2026-06-06",
+  "task": {
+    "type": "web-research-report",
+    "name": "AI-native workflow automation opportunities for SMBs",
+    "grading": "qualitative (open-ended; no exact-match key)",
+    "prompt_file": "prompt.md",
+    "prompt_chars": 948
+  },
+  "model": {
+    "id": "qwen3.5-9b-q4_k_m",
+    "quant": "Q4_K_M (GGUF)",
+    "runtime": "llama-server (local)",
+    "thinking": "off"
+  },
+  "harness": {
+    "tool": "pi",
+    "version": "0.78.1",
+    "session_file": "transcript.jsonl",
+    "cwd": "/Users/bobscott/Documents/github/localAI"
+  },
+  "metrics": {
+    "wall_clock_seconds": 4318,
+    "wall_clock_minutes": 72.0,
+    "assistant_turns": 7,
+    "tool_calls_total": 14,
+    "tool_calls_web_fetch": 12,
+    "tool_results_with_data": 9,
+    "tool_results_empty_or_blocked": 5,
+    "web_search_success_rate": 0.64,
+    "output_tokens_total": 9510,
+    "final_total_tokens": 54713,
+    "peak_context_tokens": 54173,
+    "effective_tokens_per_sec": 2.2,
+    "prefill_tokens_per_sec": 138.2,
+    "decode_tokens_per_sec": 10.5,
+    "speed_source": "transcript-estimated (see ../../perf.json for method)",
+    "cost_usd": 0.0
+  },
+  "quality": {
+    "score_overall": null,
+    "completed_all_6_requirements": true,
+    "ran_code_scoring_model": true,
+    "real_sources_used": ["api.github.com (55 repos, real)"],
+    "issues": [
+      "Most 'web search' was curl to specific URLs (crunchbase, statista, gartner, mckinsey, bcg, cbinsights, reddit, producthunt) that returned nothing/blocked — only the GitHub API returned real data.",
+      "Precise statistics in the report (+340% YoY, 67%/78%/82% of SMBs, etc.) are NOT traceable to any retrieved source — likely fabricated despite the 'distinguish evidence from assumptions' instruction.",
+      "No real citations provided, though the prompt asked for them.",
+      "Did not use a real search engine/API — relied on guessing URLs and grepping HTML."
+    ],
+    "notes_file": "notes.md"
+  }
+}

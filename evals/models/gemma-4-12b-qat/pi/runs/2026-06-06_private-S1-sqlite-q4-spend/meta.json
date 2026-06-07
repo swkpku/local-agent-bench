@@ -1,0 +1,58 @@
+{
+  "run_id": "2026-06-06_private-S1-sqlite-q4-spend",
+  "date": "2026-06-06",
+  "task": {
+    "type": "private-files",
+    "subtask": "S1",
+    "name": "SQLite query with SQL (JOIN + Q4 filter)",
+    "dataset_file": "finance/personal.db",
+    "grading": "exact-match",
+    "prompt_file": "prompt.md",
+    "answer_key": "bench/private-files/ANSWER_KEY.md"
+  },
+  "model": {
+    "id": "gemma-4-12b-qat",
+    "quant": "UD-Q4_K_XL (Unsloth Dynamic 2.0 GGUF, QAT)",
+    "runtime": "llama-server (local)",
+    "thinking": "off",
+    "sampling": "temp 0.3 / top_p 0.95 / top_k 64"
+  },
+  "harness": {
+    "tool": "pi",
+    "version": "0.78.1",
+    "session_file": "transcript.jsonl",
+    "source_session": "2026-06-07T03-23-47-400Z_019ea01b-a748-752e-b320-828668349432.jsonl",
+    "multi_task_session": true
+  },
+  "metrics": {
+    "wall_clock_seconds": 32,
+    "assistant_turns": 4,
+    "tool_calls_total": 3,
+    "tool_calls_by_type": {
+      "bash": 3
+    },
+    "prompt_input_tokens": 322,
+    "output_tokens_total": 313,
+    "final_total_tokens": 3805,
+    "peak_context_tokens": 3805,
+    "cost_usd": 0.0,
+    "speed_ref": "../../perf.json (prefill ~140, decode ~10.5 tok/s \u2014 estimated)"
+  },
+  "grading": {
+    "keys_total": 3,
+    "keys_correct_strict": 3,
+    "keys_correct_numeric": 3,
+    "pass_strict": true,
+    "pass_numeric": true,
+    "gold": {
+      "top_category": "Utilities",
+      "top_category_q4_spend": "1564.37",
+      "q4_txn_count": "46"
+    },
+    "got": {
+      "top_category": "Utilities",
+      "top_category_q4_spend": "1564.37",
+      "q4_txn_count": "46"
+    }
+  }
+}

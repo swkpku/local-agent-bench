@@ -1,0 +1,31 @@
+{
+  "model": {
+    "id": "qwen3.5-9b-q4_k_m",
+    "quant": "Q4_K_M (GGUF)",
+    "runtime": "llama-server (llama.cpp)",
+    "thinking": "off"
+  },
+  "harness": { "tool": "pi", "version": "0.78.1" },
+  "machine": "Apple M4 Mac mini (base, 16 GB unified)",
+  "runtime_settings": {
+    "ctx_size": 262144,
+    "flash_attn": "on",
+    "cache_type_k": "q8_0",
+    "cache_type_v": "q8_0",
+    "threads": 4,
+    "ubatch": 1024,
+    "parallel": 1
+  },
+  "speed": {
+    "prefill_tokens_per_sec": 138.2,
+    "decode_tokens_per_sec": 10.5,
+    "source": "estimated from pi transcript (least-squares fit of per-turn dt vs uncached-input/output tokens; decode cross-checked on the two generation-heavy turns = 10.5 tok/s)",
+    "confidence": "approximate — wall-clock includes pi/network overhead; run bench_perf.sh against a live server for exact llama-server timings",
+    "measured_on": "2026-06-06"
+  },
+  "exact_benchmark": {
+    "status": "pending",
+    "how": "start the server (make server), then: bash evals/bench_perf.sh > this combo's perf later",
+    "fields_when_run": ["prompt_per_second (prefill)", "predicted_per_second (decode)", "prompt_n", "predicted_n"]
+  }
+}

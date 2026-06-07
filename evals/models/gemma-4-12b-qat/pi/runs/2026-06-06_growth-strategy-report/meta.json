@@ -1,0 +1,64 @@
+{
+  "run_id": "2026-06-06_growth-strategy-report",
+  "date": "2026-06-06",
+  "task": {
+    "type": "web-research-report",
+    "name": "AI-native workflow automation opportunities for SMBs (same prompt as the qwen3.5-9b run)",
+    "grading": "qualitative (open-ended; no exact-match key)",
+    "prompt_file": "prompt.md",
+    "answer_key": "none (compare vs qwen3.5-9b growth run)"
+  },
+  "model": {
+    "id": "gemma-4-12b-qat",
+    "quant": "UD-Q4_K_XL (Unsloth Dynamic 2.0 GGUF, QAT)",
+    "runtime": "llama-server (local)",
+    "thinking": "off",
+    "sampling": "temp 0.3 / top_p 0.95 / top_k 64"
+  },
+  "harness": {
+    "tool": "pi",
+    "version": "0.78.1",
+    "session_file": "transcript.jsonl",
+    "source_session": "2026-06-07T01-04-42-861Z_019e9f9c-536d-787f-9de3-b00fde85e1e4.jsonl",
+    "multi_task_session": false
+  },
+  "metrics": {
+    "wall_clock_seconds": 323,
+    "assistant_turns": 5,
+    "tool_calls_total": 2,
+    "tool_calls_by_type": {
+      "bash": 2
+    },
+    "prompt_input_tokens": 0,
+    "output_tokens_total": 2907,
+    "final_total_tokens": 6154,
+    "peak_context_tokens": 6154,
+    "cost_usd": 0.0,
+    "speed_ref": "../../perf.json (prefill ~140, decode ~10.5 tok/s \u2014 estimated)"
+  },
+  "quality": {
+    "score_overall": null,
+    "status": "FAILED / refused",
+    "completed_all_6_requirements": false,
+    "did_real_web_research": false,
+    "wrote_scoring_code": false,
+    "real_sources_used": [],
+    "citations_provided": false,
+    "issues": [
+      "Refused real web research: repeatedly claimed \"I do not have access to a web search tool\" and would not use curl for open-ended search even after the user explicitly granted \"you can use curl\".",
+      "Only output an ungrounded market map synthesized from training data (named MultiOn/Lindy.ai/CrewAI/LangGraph from memory), then ABORTED mid-table.",
+      "Did not build the required quantitative scoring model in code.",
+      "No citations; no top-5 with per-opportunity MVP/GTM/risks; never reached a final recommendation.",
+      "Contrast: it DID curl a direct API URL successfully in the WB1-flask run \u2014 so the blocker is open-ended *search*, not network access."
+    ],
+    "attempts": [
+      "00-59 (refused, 0 tools)",
+      "01-04 (refuse -> ls -R + hesitant curl reasoning, partial map, aborted; this transcript)",
+      "03-05 (refused; declined curl)",
+      "03-19 (refused, single msg)",
+      "04-45 (4 tools, no final text)",
+      "05-47 (5 tools, no final text)"
+    ],
+    "notes_file": "notes.md"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "run_id": "2026-06-06_private-R5-chase-year-statements",
+  "date": "2026-06-06",
+  "task": {
+    "type": "private-files",
+    "subtask": "R5",
+    "name": "A full year of monthly checking statements (12 PDFs, discover+parse+aggregate)",
+    "dataset_file": "finance/statements_2025/ (12 PDFs)",
+    "grading": "exact-match (numeric, 7 keys)",
+    "prompt_file": "prompt.md",
+    "answer_key": "bench/private-files/ANSWER_KEY.md"
+  },
+  "model": {
+    "id": "qwen3.5-9b-q4_k_m",
+    "quant": "Q4_K_M (GGUF)",
+    "runtime": "llama-server (local)",
+    "thinking": "off"
+  },
+  "harness": {
+    "tool": "pi",
+    "version": "0.78.1",
+    "session_file": "transcript.jsonl",
+    "source_session": "2026-06-07T05-58-23-995Z_019ea0a9-33fb-7308-8a55-3aec744c2555.jsonl"
+  },
+  "metrics": {
+    "wall_clock_seconds": 925,
+    "assistant_turns": 17,
+    "tool_calls_total": 16,
+    "tool_calls_by_type": {
+      "bash": 16
+    },
+    "prompt_input_tokens": 4,
+    "output_tokens_total": 6243,
+    "final_total_tokens": 50850,
+    "peak_context_tokens": 50850,
+    "cost_usd": 0.0,
+    "speed_ref": "../../perf.json (prefill ~138, decode ~10.5 tok/s \u2014 estimated)"
+  },
+  "grading": {
+    "keys_total": 7,
+    "keys_correct_numeric": 6,
+    "pass_numeric": false,
+    "extraction": "parsed all 12 PDFs itself via pdftotext (15/16 bash calls) \u2014 no shortcut from pre-extracted text",
+    "gold": {
+      "year_total_deposits": "109428.33",
+      "year_card_purchase_count": "755",
+      "year_card_purchase_total": "55354.56",
+      "top_spend_month": "2025-12",
+      "year_total_fees": "3.00",
+      "netflix_charge_count": "12",
+      "dec_ending_balance": "21780.04"
+    },
+    "got": {
+      "year_total_deposits": "109428.33",
+      "year_card_purchase_count": "755",
+      "year_card_purchase_total": "55354.56",
+      "top_spend_month": "2025-12",
+      "year_total_fees": "0.00",
+      "netflix_charge_count": "12",
+      "dec_ending_balance": "21780.04"
+    },
+    "wrong_keys": {
+      "year_total_fees": "got 0.00 vs gold 3.00 (missed the lone $3 fee row across the year)"
+    }
+  }
+}

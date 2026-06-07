@@ -1,0 +1,55 @@
+{
+  "run_id": "2026-06-06_web-WB1-flask-release-assets",
+  "date": "2026-06-06",
+  "task": {
+    "type": "web-task",
+    "subtask": "WB1 (variant)",
+    "name": "GitHub Releases API \u2014 asset count only (simplified single-question variant of WB1)",
+    "source": "https://api.github.com/repos/pallets/flask/releases/tags/3.0.0",
+    "grading": "exact-match (single key)",
+    "prompt_file": "prompt.md",
+    "answer_key": "bench/web-tasks/ANSWER_KEY.md",
+    "note": "Only the asset_count sub-question of WB1 was asked, and as free text rather than @key format."
+  },
+  "model": {
+    "id": "gemma-4-12b-qat",
+    "quant": "UD-Q4_K_XL (Unsloth Dynamic 2.0 GGUF, QAT)",
+    "runtime": "llama-server (local)",
+    "thinking": "off",
+    "sampling": "temp 0.3 / top_p 0.95 / top_k 64"
+  },
+  "harness": {
+    "tool": "pi",
+    "version": "0.78.1",
+    "session_file": "transcript.jsonl",
+    "source_session": "2026-06-07T04-42-52-787Z_019ea064-0ff3-7256-8428-d505fca49fff.jsonl",
+    "multi_task_session": false
+  },
+  "metrics": {
+    "wall_clock_seconds": 42,
+    "assistant_turns": 2,
+    "tool_calls_total": 1,
+    "tool_calls_by_type": {
+      "bash": 1
+    },
+    "prompt_input_tokens": 926,
+    "output_tokens_total": 78,
+    "final_total_tokens": 1955,
+    "peak_context_tokens": 1955,
+    "cost_usd": 0.0,
+    "speed_ref": "../../perf.json (prefill ~140, decode ~10.5 tok/s \u2014 estimated)"
+  },
+  "grading": {
+    "keys_total": 1,
+    "keys_correct_numeric": 1,
+    "pass_numeric": true,
+    "gold": {
+      "asset_count": "3",
+      "(full_WB1_also)": "published_date 2023-09-30, asset_size_sum 789847 \u2014 not asked here"
+    },
+    "got": {
+      "asset_count": "3"
+    },
+    "note": "Answered \"The pallets/flask 3.0.0 release has 3 assets.\" via curl|jq. Proves live web fetch works for a direct API URL."
+  }
+}

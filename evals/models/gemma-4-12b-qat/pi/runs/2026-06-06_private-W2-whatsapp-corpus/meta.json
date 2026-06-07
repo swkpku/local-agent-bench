@@ -1,0 +1,72 @@
+{
+  "run_id": "2026-06-06_private-W2-whatsapp-corpus",
+  "date": "2026-06-06",
+  "task": {
+    "type": "private-files",
+    "subtask": "W2",
+    "name": "Corpus of 50 WhatsApp chats (10 MB\u20131 GB each; streaming tools; 2 needle facts)",
+    "dataset_file": "messages/group_chats/ (50 files, ~10.8 GB)",
+    "grading": "exact-match (8 keys)",
+    "prompt_file": "prompt.md",
+    "answer_key": "bench/private-files/ANSWER_KEY.md"
+  },
+  "model": {
+    "id": "gemma-4-12b-qat",
+    "quant": "UD-Q4_K_XL (Unsloth Dynamic 2.0 GGUF, QAT)",
+    "runtime": "llama-server (local)",
+    "thinking": "off",
+    "sampling": "temp 0.3 / top_p 0.95 / top_k 64"
+  },
+  "harness": {
+    "tool": "pi",
+    "version": "0.78.1",
+    "session_file": "transcript.jsonl",
+    "source_session": "2026-06-07T05-21-19-684Z_019ea087-4344-7ca4-af44-e247cf1a0545.jsonl",
+    "multi_task_session": false
+  },
+  "metrics": {
+    "wall_clock_seconds": 1177,
+    "assistant_turns": 9,
+    "tool_calls_total": 8,
+    "tool_calls_by_type": {
+      "bash": 8
+    },
+    "prompt_input_tokens": 1799,
+    "output_tokens_total": 1936,
+    "final_total_tokens": 7741,
+    "peak_context_tokens": 7741,
+    "cost_usd": 0.0,
+    "speed_ref": "../../perf.json (prefill ~140, decode ~10.5 tok/s \u2014 estimated)"
+  },
+  "grading": {
+    "keys_total": 8,
+    "keys_correct_numeric": 5,
+    "pass_numeric": false,
+    "gold": {
+      "group_count": "50",
+      "total_messages": "263013454",
+      "largest_group_file": "49_dog_park_regulars.txt",
+      "total_dinner_mentions": "32876080",
+      "gate_code": "7392",
+      "gate_code_file": "16_class_of_2015.txt",
+      "flight_number": "DL 1474",
+      "flight_file": "33_bridal_party.txt"
+    },
+    "got": {
+      "group_count": "50",
+      "total_messages": "526026957",
+      "largest_group_file": "49_dog_park_regulars.txt",
+      "total_dinner_mentions": "32876080",
+      "gate_code": "7392",
+      "gate_code_file": "49_dog_park_regulars.txt",
+      "flight_number": "DL 1474",
+      "flight_file": "49_dog_park_regulars.txt"
+    },
+    "wrong_keys": {
+      "total_messages": "got 526026957 \u2248 2x gold 263013454 (double-counted / banner not subtracted)",
+      "gate_code_file": "got 49_dog_park_regulars.txt vs gold 16_class_of_2015.txt",
+      "flight_file": "got 49_dog_park_regulars.txt vs gold 33_bridal_party.txt"
+    },
+    "note": "Found the needle VALUES (gate 7392, flight DL 1474) and the hard global aggregates (dinner mentions exact, largest file) via real streaming greps, but mis-attributed BOTH needle files to the largest file and doubled the message count."
+  }
+}

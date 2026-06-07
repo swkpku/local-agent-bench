@@ -1,0 +1,69 @@
+{
+  "run_id": "2026-06-06_private-R5-chase-year-statements",
+  "date": "2026-06-06",
+  "task": {
+    "type": "private-files",
+    "subtask": "R5",
+    "name": "A full year of monthly checking statements (12 PDFs, discover+parse+aggregate)",
+    "dataset_file": "finance/statements_2025/ (12 PDFs)",
+    "grading": "exact-match (numeric, 7 keys)",
+    "prompt_file": "prompt.md",
+    "answer_key": "bench/private-files/ANSWER_KEY.md"
+  },
+  "model": {
+    "id": "gemma-4-12b-qat",
+    "quant": "UD-Q4_K_XL (Unsloth Dynamic 2.0 GGUF, QAT)",
+    "runtime": "llama-server (local)",
+    "thinking": "off",
+    "sampling": "temp 0.3 / top_p 0.95 / top_k 64"
+  },
+  "harness": {
+    "tool": "pi",
+    "version": "0.78.1",
+    "session_file": "transcript.jsonl",
+    "source_session": "2026-06-07T04-52-59-761Z_019ea06d-52f1-7789-be3c-385ce28b90df.jsonl",
+    "multi_task_session": false
+  },
+  "metrics": {
+    "wall_clock_seconds": 651,
+    "assistant_turns": 22,
+    "tool_calls_total": 21,
+    "tool_calls_by_type": {
+      "bash": 21
+    },
+    "prompt_input_tokens": 2412,
+    "output_tokens_total": 5599,
+    "final_total_tokens": 16098,
+    "peak_context_tokens": 16098,
+    "cost_usd": 0.0,
+    "speed_ref": "../../perf.json (prefill ~140, decode ~10.5 tok/s \u2014 estimated)"
+  },
+  "grading": {
+    "keys_total": 7,
+    "keys_correct_numeric": 5,
+    "pass_numeric": false,
+    "format_issue": "omitted the [] brackets on all 7 answer lines",
+    "gold": {
+      "year_total_deposits": "109428.33",
+      "year_card_purchase_count": "755",
+      "year_card_purchase_total": "55354.56",
+      "top_spend_month": "2025-12",
+      "year_total_fees": "3.00",
+      "netflix_charge_count": "12",
+      "dec_ending_balance": "21780.04"
+    },
+    "got": {
+      "year_total_deposits": "109428.33",
+      "year_card_purchase_count": "755",
+      "year_card_purchase_total": "55354.56",
+      "top_spend_month": "2025-12",
+      "year_total_fees": "5.00",
+      "netflix_charge_count": "12",
+      "dec_ending_balance": "78.00"
+    },
+    "wrong_keys": {
+      "year_total_fees": "got 5.00 vs gold 3.00",
+      "dec_ending_balance": "got 78.00 vs gold 21780.04 (badly wrong)"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "model": {
+    "id": "gemma-4-12b-qat",
+    "quant": "UD-Q4_K_XL (Unsloth Dynamic 2.0 GGUF, quantization-aware trained)",
+    "size_on_disk": "~6.7 GB",
+    "params": "12B dense",
+    "runtime": "llama-server (llama.cpp)",
+    "thinking": "off",
+    "sampling": "temp 0.3 / top_p 0.95 / top_k 64"
+  },
+  "harness": { "tool": "pi", "version": "0.78.1" },
+  "machine": "Apple M4 Mac mini (base, 16 GB unified)",
+  "runtime_settings": {
+    "ctx_size": 131072,
+    "flash_attn": "on",
+    "cache_type_k": "q8_0",
+    "cache_type_v": "q8_0",
+    "threads": 4,
+    "batch": 2048,
+    "ubatch": 1024,
+    "parallel": 1,
+    "source": "scripts/start_llama_server.sh defaults; the exact server ctx for these runs was not separately logged (peak observed context was ~16k tokens, well within any setting)."
+  },
+  "speed": {
+    "prefill_tokens_per_sec": 140.0,
+    "decode_tokens_per_sec": 10.5,
+    "source": "estimated from pi transcripts across all gemma sessions (decode = median of per-turn output/dt on generation-heavy turns, n=10, tight 10.2-10.9 cluster; prefill = two clean cold first-turn measurements, both ~142 tok/s, on ~2.0-2.4k-token prompts).",
+    "confidence": "approximate — decode is well-constrained; prefill rests on few uncached-input points (KV-cache reuse zeroes most turns) and some later turns showed cold-start/idle stalls that were excluded. Run bench_perf.sh against a live server for exact llama-server timings.",
+    "comparison_note": "Within estimation error this is the SAME speed as qwen3.5-9b-q4_k_m on this machine (prefill ~138, decode ~10.5). The 12B QAT (4-bit) is not meaningfully slower than the 9B Q4 here — both are memory-bandwidth bound on the M4.",
+    "measured_on": "2026-06-06"
+  },
+  "exact_benchmark": {
+    "status": "pending",
+    "how": "make server MODEL=gemma-4-12b-qat, then: bash evals/bench_perf.sh",
+    "fields_when_run": ["prompt_per_second (prefill)", "predicted_per_second (decode)", "prompt_n", "predicted_n"]
+  }
+}

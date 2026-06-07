@@ -1,0 +1,47 @@
+{
+  "run_id": "2026-06-06_dabench-hard-H2-horsepower-logtransform",
+  "date": "2026-06-06",
+  "task": {
+    "type": "dabench-hard",
+    "subtask": "H2",
+    "name": "Imputation + natural-log transform (? placeholder coercion)",
+    "dataset_file": "auto-mpg.csv",
+    "grading": "exact-match (string)",
+    "prompt_file": "prompt.md",
+    "answer_key": "bench/dabench-hard/ANSWER_KEY.md"
+  },
+  "model": {
+    "id": "qwen3.5-9b-q4_k_m",
+    "quant": "Q4_K_M (GGUF)",
+    "runtime": "llama-server (local)",
+    "thinking": "off"
+  },
+  "harness": {
+    "tool": "pi",
+    "version": "0.78.1",
+    "session_file": "transcript.jsonl"
+  },
+  "metrics": {
+    "wall_clock_seconds": 44,
+    "assistant_turns": 3,
+    "tool_calls": 2,
+    "output_tokens_total": 423,
+    "cost_usd": 0.0,
+    "speed_ref": "../../perf.json (prefill ~138, decode ~10.5 tok/s)"
+  },
+  "grading": {
+    "keys_total": 2,
+    "keys_correct_strict": 2,
+    "keys_correct_numeric": 2,
+    "pass_strict": true,
+    "pass_numeric": true,
+    "gold": {
+      "mean_transformed_horsepower": "4.59",
+      "stddev_transformed_horsepower": "0.34"
+    },
+    "got": {
+      "mean_transformed_horsepower": "4.59",
+      "stddev_transformed_horsepower": "0.34"
+    }
+  }
+}

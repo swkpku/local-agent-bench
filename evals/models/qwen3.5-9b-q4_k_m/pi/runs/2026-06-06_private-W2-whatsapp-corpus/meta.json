@@ -1,0 +1,56 @@
+{
+  "run_id": "2026-06-06_private-W2-whatsapp-corpus",
+  "date": "2026-06-06",
+  "task": {
+    "type": "private-files",
+    "subtask": "W2",
+    "name": "Corpus of 50 WhatsApp chats (10 MB\u20131 GB each; streaming tools; 2 needle facts)",
+    "dataset_file": "messages/group_chats/ (50 files, ~10.8 GB)",
+    "grading": "exact-match (8 keys)",
+    "prompt_file": "prompt.md",
+    "answer_key": "bench/private-files/ANSWER_KEY.md"
+  },
+  "model": {
+    "id": "qwen3.5-9b-q4_k_m",
+    "quant": "Q4_K_M (GGUF)",
+    "runtime": "llama-server (local)",
+    "thinking": "off"
+  },
+  "harness": {
+    "tool": "pi",
+    "version": "0.78.1",
+    "session_file": "transcript.jsonl",
+    "source_session": "2026-06-07T06-29-20-848Z_019ea0c5-894f-7616-8568-2f262174c95a.jsonl"
+  },
+  "metrics": {
+    "wall_clock_seconds": 1088,
+    "assistant_turns": 68,
+    "tool_calls_total": 68,
+    "tool_calls_by_type": {
+      "bash": 68
+    },
+    "prompt_input_tokens": 1023,
+    "output_tokens_total": 4877,
+    "final_total_tokens": 11515,
+    "peak_context_tokens": 11563,
+    "cost_usd": 0.0,
+    "speed_ref": "../../perf.json (prefill ~138, decode ~10.5 tok/s \u2014 estimated)"
+  },
+  "grading": {
+    "keys_total": 8,
+    "keys_correct_numeric": 0,
+    "pass_numeric": false,
+    "status": "DID NOT COMPLETE \u2014 no @key answer emitted in 68 tool calls (~18 min), run interrupted",
+    "gold": {
+      "group_count": "50",
+      "total_messages": "263013454",
+      "largest_group_file": "49_dog_park_regulars.txt",
+      "total_dinner_mentions": "32876080",
+      "gate_code": "7392",
+      "gate_code_file": "16_class_of_2015.txt",
+      "flight_number": "DL 1474",
+      "flight_file": "33_bridal_party.txt"
+    },
+    "got": {}
+  }
+}

@@ -1,6 +1,7 @@
 .env
 .cache/
-models/
+# root GGUF weights only (NOT evals/models/, which holds run data and IS tracked)
+/models/
 .venv/
 *.log
 __pycache__/
