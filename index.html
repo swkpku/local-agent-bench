@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>localAI — run a capable agent on your own Mac</title>
+<meta name="description" content="Benchmarks and a field manual for running local LLM agents on a 16 GB Apple Silicon Mac. 100% local, no API key.">
+<style>
+  :root{
+    --bg:#ece7d8; --ink:#f6f3ea; --ink-2:#fdfbf4; --line:#d6cfba; --line-hi:#b6ab8f;
+    --fg:#23201a; --fg-dim:#5f5a4e; --fg-faint:#8f8772; --amber:#b06f0c; --go:#2f8a55; --cyan:#0e7c86;
+    --display:"Futura","Avenir Next Condensed","Century Gothic",sans-serif;
+    --mono:ui-monospace,"SF Mono","SFMono-Regular","JetBrains Mono",Menlo,Consolas,monospace;
+    --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='110' height='110'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  html[data-theme="dark"]{
+    --bg:#07090d; --ink:#0c0f15; --ink-2:#11151d; --line:#1b212e; --line-hi:#2c3548;
+    --fg:#ece9e0; --fg-dim:#9aa1ae; --fg-faint:#6b7689; --amber:#ffb000; --go:#52c785; --cyan:#37c2cf;
+  }
+  *{box-sizing:border-box;} html,body{margin:0;}
+  body{
+    background:var(--bg); color:var(--fg); font-family:var(--mono); font-size:14px; line-height:1.55;
+    min-height:100vh; display:flex; flex-direction:column;
+    background-image:
+      radial-gradient(120% 70% at 50% -10%, rgba(176,111,12,.05), transparent 55%),
+      linear-gradient(rgba(60,80,110,.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(60,80,110,.06) 1px, transparent 1px);
+    background-size:auto,27px 27px,27px 27px; background-attachment:fixed; transition:background-color .4s,color .4s;
+  }
+  html[data-theme="dark"] body{
+    background-image:
+      radial-gradient(130% 70% at 50% -12%, rgba(255,176,0,.07), transparent 58%),
+      linear-gradient(rgba(120,150,200,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(120,150,200,.05) 1px, transparent 1px);
+  }
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:80;background-image:var(--grain);background-size:150px;opacity:.4;mix-blend-mode:multiply;}
+  html[data-theme="dark"] body::after{opacity:.5;mix-blend-mode:soft-light;}
+  .wrap{max-width:920px;margin:0 auto;padding:0 26px;position:relative;z-index:1;width:100%;}
+  h1,h2,h3{font-family:var(--display);font-weight:600;}
+  .toolbar{position:fixed;top:16px;right:18px;z-index:90;display:flex;gap:6px;}
+  .toolbar button{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;background:var(--ink);color:var(--fg-dim);border:1px solid var(--line-hi);padding:5px 9px;cursor:pointer;}
+  .toolbar button:hover{color:var(--amber);border-color:var(--amber);}
+  header{padding:78px 0 26px;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--amber);display:inline-flex;align-items:center;gap:10px;margin-bottom:20px;}
+  .eyebrow::before{content:"";width:30px;height:1px;background:var(--amber);}
+  h1{font-size:clamp(38px,7vw,76px);line-height:.94;letter-spacing:-.01em;text-transform:uppercase;margin:0;}
+  h1 .warm{color:var(--amber);}
+  .lede{color:var(--fg-dim);font-size:16px;max-width:620px;margin:20px 0 0;}
+  .lede b{color:var(--fg);}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:34px 0 10px;}
+  a.card{display:block;text-decoration:none;color:inherit;background:var(--ink);border:1px solid var(--line);border-left:3px solid var(--accent);padding:22px 22px 20px;transition:transform .18s,border-color .18s,background .18s;}
+  a.card:hover{transform:translateY(-4px);background:var(--ink-2);border-left-color:var(--accent);box-shadow:0 14px 34px rgba(0,0,0,.10);}
+  a.card .k{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);}
+  a.card h2{font-size:23px;text-transform:uppercase;margin:9px 0 8px;}
+  a.card p{margin:0;color:var(--fg-dim);font-size:13.5px;}
+  a.card .go{margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);}
+  .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;}
+  .chip{font-family:var(--mono);font-size:11px;color:var(--fg-dim);border:1px solid var(--line-hi);padding:4px 10px;}
+  .chip b{color:var(--go);}
+  footer{margin-top:auto;border-top:1px solid var(--line);}
+  footer .f{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;padding:20px 0 34px;font-family:var(--mono);font-size:11px;color:var(--fg-faint);letter-spacing:.07em;text-transform:uppercase;}
+  footer a{color:var(--fg-faint);border-bottom:1px dotted var(--line-hi);text-decoration:none;}
+  footer a:hover{color:var(--amber);}
+  @media (max-width:680px){.cards{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="toolbar"><button data-set="light">Light</button><button data-set="dark">Dark</button></div>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">localAI · benchmarks &amp; field notes</div>
+    <h1>Run a capable agent on your <span class="warm">own Mac</span></h1>
+    <p class="lede">What a base <b>16 GB Apple Silicon Mac mini</b> can really do when a 4-bit local LLM drives tools, the shell, and your files — measured on actual benchmark tasks. <b>100% local, no API key, $0.00.</b></p>
+    <div class="meta">
+      <span class="chip">13 agent runs</span>
+      <span class="chip">2 models · 4-bit</span>
+      <span class="chip"><b>$0.00</b> · fully private</span>
+    </div>
+  </header>
+
+  <div class="cards">
+    <a class="card" href="evals/summary.html" style="--accent:var(--amber)">
+      <div class="k">Interactive datasheet</div>
+      <h2>What a Mac mini Can Do</h2>
+      <p>The capability envelope — data analysis, format-aware extraction, live web fetch, 10 GB-scale streaming, and where the ceiling is. Click any task for the data, the question, and the model's graded answers.</p>
+      <div class="go">Open the datasheet →</div>
+    </a>
+    <a class="card" href="docs/local-agent-stack.html" style="--accent:var(--cyan)">
+      <div class="k">Field manual</div>
+      <h2>The Local Agent Stack</h2>
+      <p>Zero → working local agent: size → runtime → model → verify → agent. How the layers fit, what makes a small model reliable, and the levers that span the stack.</p>
+      <div class="go">Read the field manual →</div>
+    </a>
+  </div>
+
+  <p class="lede" style="font-size:13.5px;margin-top:22px">Browse the raw runs and leaderboard in <a href="evals/" style="color:var(--amber);border-bottom:1px dotted">evals/</a> (per-run prompt, transcript, metrics &amp; scoring), the task suite in <code>bench/</code>, and the harness in <code>scripts/</code> + <code>agents/</code>.</p>
+</div>
+
+<footer><div class="wrap"><div class="f">
+  <span>localAI · <b style="color:var(--fg)">local-agent-bench</b></span>
+  <span>size → runtime → model → verify → agent</span>
+  <span><a href="https://github.com/swkpku/local-agent-bench">source on github</a></span>
+</div></div></footer>
+
+<script>
+(function(){
+  try{var t=localStorage.getItem('las-theme');if(!t)t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}
+  document.querySelectorAll('.toolbar button').forEach(function(b){b.addEventListener('click',function(){var t=b.getAttribute('data-set');document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('las-theme',t);}catch(e){}});});
+})();
+</script>
+</body>
+</html>
