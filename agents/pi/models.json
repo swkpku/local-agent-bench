@@ -1,0 +1,32 @@
+{
+  "providers": {
+    "localai": {
+      "baseUrl": "http://127.0.0.1:8080/v1",
+      "api": "openai-completions",
+      "apiKey": "local-noauth",
+      "models": [
+        {
+          "id": "qwen3.5-9b-q4_k_m",
+          "name": "Qwen3.5 9B Q4_K_M (local llama-server)",
+          "input": ["text"],
+          "contextWindow": 131072,
+          "maxTokens": 4096
+        },
+        {
+          "id": "gemma-4-12b-qat",
+          "name": "Gemma 4 12B QAT UD-Q4_K_XL (local llama-server)",
+          "input": ["text"],
+          "contextWindow": 131072,
+          "maxTokens": 4096
+        },
+        {
+          "id": "gemma-4-e4b-qat",
+          "name": "Gemma 4 E4B QAT UD-Q4_K_XL (local llama-server)",
+          "input": ["text"],
+          "contextWindow": 131072,
+          "maxTokens": 4096
+        }
+      ]
+    }
+  }
+}

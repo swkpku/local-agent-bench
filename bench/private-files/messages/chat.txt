@@ -1,0 +1,140 @@
+05/01/25, 12:16 - Me: dinner at 7?
+05/01/25, 13:45 - Me: on my way
+05/01/25, 16:58 - Me: yes
+05/01/25, 17:23 - Alice: see you soon
+05/01/25, 21:01 - Alice: where are you
+05/01/25, 22:10 - Me: running late
+05/01/25, 22:18 - Alice: on my way
+05/01/25, 23:08 - Alice: running late
+05/02/25, 00:54 - Me: ok
+05/02/25, 02:07 - Alice: yes
+05/02/25, 05:06 - Me: dinner at 7?
+05/02/25, 07:11 - Alice: let's get dinner
+05/02/25, 09:12 - Me: on my way
+05/02/25, 10:49 - Me: sounds good
+05/02/25, 12:17 - Me: lunch tomorrow?
+05/02/25, 12:46 - Me: haha
+05/02/25, 15:35 - Me: yes
+05/02/25, 16:35 - Me: sounds good
+05/02/25, 19:14 - Alice: yes
+05/02/25, 20:48 - Me: running late
+05/02/25, 21:30 - Me: running late
+05/03/25, 00:09 - Me: call me
+05/03/25, 03:21 - Me: let's get dinner
+05/03/25, 05:05 - Alice: dinner was great
+05/03/25, 08:27 - Alice: lunch tomorrow?
+05/03/25, 11:01 - Alice: thanks!
+05/03/25, 14:27 - Me: ok
+05/03/25, 14:38 - Me: dinner at 7?
+05/03/25, 16:53 - Alice: no worries
+05/03/25, 18:44 - Alice: ok
+05/03/25, 20:47 - Alice: sounds good
+05/03/25, 22:11 - Alice: no worries
+05/04/25, 00:25 - Me: thanks!
+05/04/25, 03:51 - Alice: where are you
+05/04/25, 05:58 - Alice: yes
+05/04/25, 07:23 - Me: dinner at 7?
+05/04/25, 07:53 - Me: lunch tomorrow?
+05/04/25, 10:18 - Alice: haha
+05/04/25, 13:10 - Alice: on my way
+05/04/25, 16:27 - Alice: haha
+05/04/25, 16:57 - Me: running late
+05/04/25, 18:38 - Alice: lunch tomorrow?
+05/04/25, 20:33 - Alice: where are you
+05/04/25, 22:36 - Me: ok
+05/05/25, 01:45 - Alice: dinner was great
+05/05/25, 03:57 - Me: see you soon
+05/05/25, 05:40 - Me: lunch tomorrow?
+05/05/25, 06:05 - Me: haha
+05/05/25, 08:15 - Me: lunch tomorrow?
+05/05/25, 11:09 - Me: dinner at 7?
+05/05/25, 11:26 - Me: no worries
+05/05/25, 12:13 - Alice: no worries
+05/05/25, 13:27 - Me: dinner at 7?
+05/05/25, 15:46 - Me: no worries
+05/05/25, 15:53 - Alice: dinner at 7?
+05/05/25, 17:15 - Me: on my way
+05/05/25, 19:18 - Me: no worries
+05/05/25, 22:06 - Me: lunch tomorrow?
+05/05/25, 23:13 - Alice: ok
+05/06/25, 00:57 - Me: yes
+05/06/25, 03:10 - Alice: let's get dinner
+05/06/25, 04:49 - Alice: sounds good
+05/06/25, 06:59 - Me: ok
+05/06/25, 10:28 - Alice: dinner at 7?
+05/06/25, 12:00 - Me: no worries
+05/06/25, 15:15 - Me: lunch tomorrow?
+05/06/25, 17:01 - Me: ok
+05/06/25, 18:50 - Me: sounds good
+05/06/25, 19:55 - Alice: on my way
+05/06/25, 22:58 - Alice: call me
+05/07/25, 02:05 - Me: running late
+05/07/25, 03:59 - Alice: on my way
+05/07/25, 06:53 - Alice: dinner at 7?
+05/07/25, 10:25 - Me: on my way
+05/07/25, 11:35 - Alice: on my way
+05/07/25, 14:50 - Me: sounds good
+05/07/25, 15:21 - Me: lunch tomorrow?
+05/07/25, 16:19 - Alice: see you soon
+05/07/25, 18:41 - Me: running late
+05/07/25, 21:38 - Alice: thanks!
+05/07/25, 23:25 - Me: lunch tomorrow?
+05/08/25, 03:02 - Alice: dinner was great
+05/08/25, 04:56 - Me: let's get dinner
+05/08/25, 06:26 - Alice: dinner was great
+05/08/25, 08:30 - Alice: ok
+05/08/25, 11:54 - Alice: ok
+05/08/25, 12:43 - Alice: let's get dinner
+05/08/25, 15:21 - Alice: yes
+05/08/25, 18:39 - Me: no worries
+05/08/25, 22:05 - Alice: thanks!
+05/08/25, 22:10 - Alice: no worries
+05/09/25, 01:41 - Me: running late
+05/09/25, 01:58 - Me: where are you
+05/09/25, 05:20 - Me: dinner at 7?
+05/09/25, 07:58 - Me: no worries
+05/09/25, 11:03 - Alice: dinner was great
+05/09/25, 11:29 - Me: thanks!
+05/09/25, 12:03 - Alice: lunch tomorrow?
+05/09/25, 15:42 - Me: see you soon
+05/09/25, 17:39 - Me: lunch tomorrow?
+05/09/25, 18:45 - Me: lunch tomorrow?
+05/09/25, 22:06 - Alice: yes
+05/09/25, 23:21 - Alice: see you soon
+05/10/25, 02:42 - Alice: haha
+05/10/25, 02:48 - Me: see you soon
+05/10/25, 05:01 - Me: where are you
+05/10/25, 07:43 - Alice: dinner was great
+05/10/25, 08:07 - Me: call me
+05/10/25, 08:22 - Me: ok
+05/10/25, 11:05 - Me: yes
+05/10/25, 13:22 - Alice: running late
+05/10/25, 14:17 - Me: yes
+05/10/25, 14:48 - Me: thanks!
+05/10/25, 15:03 - Me: lunch tomorrow?
+05/10/25, 15:44 - Alice: call me
+05/10/25, 17:46 - Me: haha
+05/10/25, 21:12 - Me: no worries
+05/10/25, 22:31 - Alice: on my way
+05/11/25, 01:08 - Me: dinner at 7?
+05/11/25, 01:16 - Me: ok
+05/11/25, 01:58 - Me: dinner at 7?
+05/11/25, 03:55 - Me: dinner at 7?
+05/11/25, 07:32 - Me: thanks!
+05/11/25, 09:01 - Me: sounds good
+05/11/25, 10:46 - Alice: lunch tomorrow?
+05/11/25, 12:09 - Me: no worries
+05/11/25, 13:14 - Alice: no worries
+05/11/25, 13:50 - Alice: running late
+05/11/25, 14:58 - Me: dinner at 7?
+05/11/25, 18:05 - Alice: no worries
+05/11/25, 20:23 - Me: no worries
+05/11/25, 21:45 - Me: running late
+05/11/25, 23:25 - Me: lunch tomorrow?
+05/12/25, 02:56 - Alice: see you soon
+05/12/25, 06:28 - Me: haha
+05/12/25, 09:24 - Me: call me
+05/12/25, 12:36 - Alice: lunch tomorrow?
+05/12/25, 15:13 - Alice: call me
+05/12/25, 17:07 - Me: sounds good
+05/12/25, 17:55 - Alice: no worries

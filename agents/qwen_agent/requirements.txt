@@ -1,0 +1,8 @@
+# Qwen-Agent drives the local model through the OpenAI-compatible API.
+# Optional extras (heavier): qwen-agent[gui,rag,code_interpreter,mcp]
+qwen-agent
+# qwen-agent 0.0.34 eagerly imports all bundled tools on `import qwen_agent`,
+# so a few of their deps are required even for a plain Assistant:
+numpy            # qwen_agent.utils
+soundfile        # qwen_agent.utils (audio helpers)
+python-dateutil  # qwen_agent.tools.python_executor (class-body import)

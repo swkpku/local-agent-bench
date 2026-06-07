@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Local Agent Stack — Field Manual</title>
+<style>
+  /* ============================================================
+     LOCAL AGENT STACK · visual field manual
+     Aesthetic: aerospace / engineering datasheet on a blueprint
+     canvas. Futura display + monospace data. Blueprint grid,
+     CRT amber glow, grain, schematic corner-brackets.
+     Concept: color temperature RISES as you climb the stack.
+     Self-contained — no network, no external fonts.
+     ============================================================ */
+  /* ---- LIGHT (default): drafting paper / vellum blueprint ---- */
+  :root {
+    --bg:        #ece7d8;   /* warm drafting vellum */
+    --ink:       #f6f3ea;   /* card paper */
+    --ink-2:     #fdfbf4;   /* hover / brightest */
+    --line:      #d6cfba;
+    --line-hi:   #b6ab8f;
+    --fg:        #23201a;   /* graphite ink */
+    --fg-dim:    #5f5a4e;
+    --fg-faint:  #8f8772;
+
+    --amber:     #b06f0c;   /* burnt ochre — dominant accent on paper */
+    --amber-soft:#8a560c;
+    --cyan:      #0e7c86;   /* deep teal */
+    --go:        #2f8a55;   /* deep green */
+
+    /* stack temperature ramp: cool (deep) -> warm (high) */
+    --t-hw:  #45647f;
+    --t-rt:  #2f72b8;
+    --t-md:  #565bb0;
+    --t-pr:  #1c8a85;
+    --t-ag:  #bd7714;
+    --t-tk:  #5a9b34;
+
+    /* theme-independent */
+    --display: "Futura", "Avenir Next Condensed", "Century Gothic", "Twentieth Century", sans-serif;
+    --mono: ui-monospace, "SF Mono", "SFMono-Regular", "JetBrains Mono", Menlo, Consolas, monospace;
+    --maxw: 1180px;
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='110' height='110'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---- DARK: phosphor terminal ---- */
+  html[data-theme="dark"] {
+    --bg:        #07090d;
+    --ink:       #0c0f15;
+    --ink-2:     #11151d;
+    --line:      #1b212e;
+    --line-hi:   #2c3548;
+    --fg:        #ece9e0;   /* warm paper white */
+    --fg-dim:    #9aa1ae;
+    --fg-faint:  #585f70;
+    --amber:     #ffb000;   /* dominant accent — P3 phosphor */
+    --amber-soft:#f2cd8c;
+    --cyan:      #3fd0db;
+    --go:        #46c97d;
+    --t-hw:  #5d7a98;
+    --t-rt:  #4f93d4;
+    --t-md:  #7e83c8;
+    --t-pr:  #34c6c0;
+    --t-ag:  #f0a435;
+    --t-tk:  #8fce5e;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    color: var(--fg);
+    font-family: var(--mono);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(120% 70% at 50% -10%, rgba(176,111,12,.05), transparent 55%),
+      radial-gradient(125% 125% at 50% 45%, transparent 60%, rgba(80,60,20,.10)),
+      linear-gradient(rgba(60,80,110,.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(60,80,110,.06) 1px, transparent 1px),
+      linear-gradient(rgba(60,80,110,.09) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(60,80,110,.09) 1px, transparent 1px);
+    background-size: auto, auto, 27px 27px, 27px 27px, 135px 135px, 135px 135px;
+    background-attachment: fixed;
+    transition: background-color .4s ease, color .4s ease;
+  }
+  /* DARK canvas: CRT glow + cool blueprint grid */
+  html[data-theme="dark"] body {
+    background-image:
+      radial-gradient(130% 70% at 50% -12%, rgba(255,176,0,.07), transparent 58%),
+      radial-gradient(120% 120% at 50% 45%, transparent 55%, rgba(0,0,0,.55)),
+      linear-gradient(rgba(120,150,200,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(120,150,200,.045) 1px, transparent 1px),
+      linear-gradient(rgba(120,150,200,.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(120,150,200,.07) 1px, transparent 1px);
+  }
+  /* texture overlay: paper grain (light) ; grain + scanlines (dark) */
+  body::after {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 80;
+    background-image: var(--grain);
+    background-size: 150px 150px;
+    opacity: .4; mix-blend-mode: multiply;
+  }
+  html[data-theme="dark"] body::after {
+    background-image: var(--grain),
+      repeating-linear-gradient(0deg, rgba(0,0,0,.16) 0 1px, transparent 1px 3px);
+    background-size: 110px 110px, 100% 3px;
+    opacity: .5; mix-blend-mode: soft-light;
+  }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 26px; position: relative; z-index: 1; }
+  a { color: var(--amber); text-decoration: none; border-bottom: 1px dotted color-mix(in srgb, var(--amber) 55%, transparent); }
+  a:hover { color: var(--amber-soft); border-bottom-color: var(--amber-soft); }
+
+  /* ---------- schematic corner brackets ---------- */
+  .framed { position: relative; }
+  .framed::before {
+    content: ""; position: absolute; inset: 6px; pointer-events: none;
+    --b: var(--bracket, var(--line-hi)); --l: 15px; --w: 1.5px;
+    background:
+      linear-gradient(var(--b),var(--b)) left  top    / var(--l) var(--w) no-repeat,
+      linear-gradient(var(--b),var(--b)) left  top    / var(--w) var(--l) no-repeat,
+      linear-gradient(var(--b),var(--b)) right top    / var(--l) var(--w) no-repeat,
+      linear-gradient(var(--b),var(--b)) right top    / var(--w) var(--l) no-repeat,
+      linear-gradient(var(--b),var(--b)) left  bottom / var(--l) var(--w) no-repeat,
+      linear-gradient(var(--b),var(--b)) left  bottom / var(--w) var(--l) no-repeat,
+      linear-gradient(var(--b),var(--b)) right bottom / var(--l) var(--w) no-repeat,
+      linear-gradient(var(--b),var(--b)) right bottom / var(--w) var(--l) no-repeat;
+    opacity: .55; transition: opacity .25s ease;
+  }
+  .framed:hover::before { opacity: 1; }
+
+  /* ---------- type ---------- */
+  .display { font-family: var(--display); }
+  .tag {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .26em;
+    text-transform: uppercase; color: var(--fg-faint);
+  }
+  h1,h2,h3 { font-family: var(--display); font-weight: 600; letter-spacing: .01em; }
+
+  /* ---------- HERO ---------- */
+  header.hero { padding: 70px 0 34px; }
+  .hero-grid { display: grid; grid-template-columns: 1.4fr .9fr; gap: 34px; align-items: end; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .32em; text-transform: uppercase;
+    color: var(--amber); display: inline-flex; align-items: center; gap: 10px; margin-bottom: 22px;
+  }
+  .eyebrow::before { content: ""; width: 30px; height: 1px; background: var(--amber); display: inline-block; }
+  h1.title {
+    font-family: var(--display); font-weight: 600;
+    font-size: clamp(40px, 7.4vw, 92px); line-height: .92; letter-spacing: -0.01em;
+    text-transform: uppercase; margin: 0; color: var(--fg);
+  }
+  h1.title .warm { color: var(--amber); }
+  .cursor { color: var(--amber); animation: blink 1.1s steps(1) infinite; font-weight: 400; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .lede { color: var(--fg-dim); font-size: 16px; max-width: 560px; margin: 22px 0 0; }
+  .lede b { color: var(--fg); font-weight: 600; }
+
+  /* datasheet spec block */
+  .spec { background: linear-gradient(180deg, rgba(255,176,0,.04), transparent), var(--ink); border: 1px solid var(--line); padding: 20px 20px 16px; --bracket: var(--amber); }
+  .spec .spec-h { font-family: var(--mono); font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--amber); margin-bottom: 14px; display:flex; justify-content:space-between; }
+  .spec dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 7px 16px; font-family: var(--mono); font-size: 12.5px; }
+  .spec dt { color: var(--fg-faint); text-transform: uppercase; letter-spacing: .08em; }
+  .spec dd { margin: 0; color: var(--fg); text-align: right; }
+  .spec dd .ok { color: var(--go); }
+
+  /* ---------- SECTION HEADERS ---------- */
+  section { padding: 46px 0; }
+  .sec-head { display: flex; align-items: baseline; gap: 18px; margin-bottom: 28px; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+  .sec-no { font-family: var(--mono); font-size: 13px; color: var(--amber); letter-spacing: .1em; flex: none; }
+  .sec-head h2 { font-size: clamp(22px, 3.2vw, 34px); margin: 0; text-transform: uppercase; letter-spacing: 0; }
+  .sec-head .note { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--fg-faint); text-align: right; max-width: 320px; text-transform: uppercase; letter-spacing: .1em; }
+  .sec-sub { color: var(--fg-dim); font-size: 15px; max-width: 760px; margin: -12px 0 24px; }
+
+  /* ---------- LAYER GROUP BAND ---------- */
+  .layer-band {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 16px;
+    margin: 44px 0 -22px; padding: 15px 20px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--t-ag) 15%, var(--ink)), var(--ink) 58%);
+    border: 1px solid color-mix(in srgb, var(--t-ag) 42%, var(--line)); border-left: 3px solid var(--t-ag);
+  }
+  .layer-band .lb-no { font-family: var(--display); font-size: 34px; line-height: 1; color: var(--t-ag); letter-spacing: -.02em; }
+  .layer-band .lb-ttl { font-family: var(--display); font-size: 21px; text-transform: uppercase; letter-spacing: .03em; }
+  .layer-band .lb-sub { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--fg-dim); text-align: right; max-width: 470px; text-transform: uppercase; letter-spacing: .07em; }
+
+  /* ---------- STACK ---------- */
+  .stack { display: flex; flex-direction: column-reverse; gap: 9px; }
+  .layer {
+    display: grid; grid-template-columns: 92px 1fr auto; align-items: center; gap: 22px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 9%, var(--ink)), var(--ink) 55%);
+    border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 16px 20px; transition: transform .2s ease, border-color .2s ease;
+  }
+  .layer:hover { transform: translateX(7px); border-color: var(--accent); }
+  .layer .num {
+    font-family: var(--display); font-size: 40px; font-weight: 600; line-height: 1;
+    color: var(--accent); opacity: .92; letter-spacing: -.02em;
+  }
+  .layer .num small { display:block; font-family: var(--mono); font-size: 9px; letter-spacing: .24em; color: var(--fg-faint); margin-top: 4px; }
+  .layer .ttl { font-family: var(--display); font-size: 19px; text-transform: uppercase; letter-spacing: .02em; }
+  .layer .ttl .role { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: .14em; margin-left: 10px; border: 1px solid var(--accent); padding: 2px 7px; vertical-align: middle; }
+  .layer .desc { color: var(--fg-dim); font-size: 13.5px; margin-top: 3px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; max-width: 340px; }
+  .chip { font-family: var(--mono); font-size: 11.5px; color: var(--fg-dim); border: 1px solid var(--line-hi); padding: 3px 9px; white-space: nowrap; transition: .15s; }
+  .chip.hi { color: var(--accent); border-color: var(--accent); }
+  .chip:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .ramp-key { display:flex; align-items:center; justify-content:center; gap: 14px; margin-top: 18px; font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-faint); }
+  .ramp-bar { height: 8px; width: 200px; background: linear-gradient(90deg, var(--t-hw), var(--t-rt), var(--t-md), var(--t-pr), var(--t-ag), var(--t-tk)); }
+
+  /* ---------- FLOW ---------- */
+  .flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 0; border: 1px solid var(--line); }
+  .flow .node { padding: 18px 12px; text-align: center; border-right: 1px dashed var(--line); position: relative; }
+  .flow .node:last-child { border-right: none; }
+  .flow .node::after { content: "→"; position: absolute; right: -9px; top: 50%; transform: translateY(-50%); color: var(--amber); font-size: 15px; z-index: 2; background: var(--bg); padding: 2px 0; }
+  .flow .node:last-child::after { content: none; }
+  .flow .node .ic { font-size: 19px; filter: grayscale(.2); }
+  .flow .node .nm { font-family: var(--display); font-size: 14px; text-transform: uppercase; letter-spacing: .03em; margin-top: 6px; }
+  .flow .node .sub { font-family: var(--mono); font-size: 10.5px; color: var(--fg-faint); }
+
+  /* ---------- CARDS / GRID ---------- */
+  .grid { display: grid; gap: 13px; }
+  .cols-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .cols-3 { grid-template-columns: repeat(auto-fit, minmax(232px, 1fr)); }
+  .cols-4 { grid-template-columns: repeat(auto-fit, minmax(204px, 1fr)); }
+  .card { background: var(--ink); border: 1px solid var(--line); padding: 18px; transition: border-color .2s, transform .2s, background .2s; }
+  .card:hover { border-color: var(--line-hi); transform: translateY(-3px); background: var(--ink-2); }
+  .card .role { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .16em; color: var(--fg-faint); }
+  .card h3 { font-size: 17px; margin: 7px 0 0; text-transform: uppercase; letter-spacing: .01em; display: flex; align-items: center; gap: 9px; }
+  .card p { margin: 9px 0 0; color: var(--fg-dim); font-size: 13px; line-height: 1.55; }
+  .card .meta { margin-top: 13px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .dot { width: 9px; height: 9px; flex: none; box-shadow: 0 0 8px currentColor; }
+  .featured { border-color: var(--amber); background: linear-gradient(180deg, rgba(176,111,12,.07), transparent), var(--ink); --bracket: var(--amber); box-shadow: 0 12px 30px -24px rgba(150,110,20,.5); }
+  html[data-theme="dark"] .featured { background: linear-gradient(180deg, rgba(255,176,0,.06), transparent), var(--ink); box-shadow: 0 16px 50px -28px rgba(255,176,0,.6); }
+  .featured .role { color: var(--amber); }
+  .ribbon { font-family: var(--mono); font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--bg); background: var(--amber); padding: 2px 8px; font-weight: 700; }
+  .card-top { display: flex; justify-content: space-between; align-items: center; }
+  .ptag { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; line-height: 1.5; white-space: nowrap; padding: 1px 6px; border: 1px solid currentColor; margin-left: auto; }
+  .ptag.code   { color: var(--go); }
+  .ptag.json   { color: var(--t-rt); }
+  .ptag.hybrid { color: var(--amber); }
+  .ptag.edit   { color: var(--fg-faint); }
+  .plegend { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; margin: 0 0 22px; font-family: var(--mono); font-size: 11px; color: var(--fg-dim); letter-spacing: .06em; text-transform: uppercase; }
+  .plegend .ptag { margin-left: 0; margin-right: 6px; }
+
+  /* ---------- AGENT LOOP ---------- */
+  .loop { display: flex; align-items: stretch; flex-wrap: wrap; gap: 0; border: 1px solid color-mix(in srgb, var(--t-ag) 35%, var(--line)); }
+  .loop .step { flex: 1; min-width: 130px; padding: 18px 14px; text-align: center; background: color-mix(in srgb, var(--t-ag) 7%, var(--ink)); border-right: 1px dashed color-mix(in srgb, var(--t-ag) 30%, var(--line)); position: relative; }
+  .loop .step:last-child { border-right: none; background: color-mix(in srgb, var(--go) 9%, var(--ink)); }
+  .loop .step .lbl { font-family: var(--display); font-size: 16px; text-transform: uppercase; letter-spacing: .04em; color: var(--t-ag); }
+  .loop .step:last-child .lbl { color: var(--go); }
+  .loop .step .d { font-family: var(--mono); font-size: 10.5px; color: var(--fg-dim); margin-top: 3px; }
+  .loop .step:not(:last-child)::after { content: "→"; position: absolute; right: -8px; top: 50%; transform: translateY(-50%); color: var(--t-ag); z-index: 2; background: var(--bg); }
+  .loop-back { text-align: center; font-family: var(--mono); font-size: 12px; color: var(--t-ag); margin-top: 13px; letter-spacing: .06em; }
+
+  /* ---------- VERSUS ---------- */
+  .versus { display: grid; grid-template-columns: 1fr 56px 1fr; gap: 14px; align-items: stretch; }
+  .vs { display: grid; place-items: center; font-family: var(--display); font-size: 18px; color: var(--fg-faint); }
+  .pane { background: var(--ink); border: 1px solid var(--line); padding: 20px; }
+  .pane.win { border-color: var(--go); --bracket: var(--go); box-shadow: 0 12px 30px -26px rgba(40,120,70,.45); }
+  html[data-theme="dark"] .pane.win { box-shadow: 0 14px 44px -30px rgba(70,201,125,.7); }
+  .pane h3 { font-size: 18px; margin: 6px 0 2px; text-transform: uppercase; }
+  .pane .tagline { font-family: var(--mono); font-size: 12px; color: var(--fg-dim); }
+  .pane ul { margin: 13px 0 0; padding-left: 0; list-style: none; }
+  .pane li { font-size: 13px; color: var(--fg-dim); padding-left: 18px; position: relative; margin-bottom: 6px; }
+  .pane li::before { content: "·"; position: absolute; left: 4px; color: var(--fg-faint); font-weight: 700; }
+  .win li::before { content: "+"; color: var(--go); }
+  .badge-win { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--go); letter-spacing: .1em; text-transform: uppercase; }
+
+  /* ---------- RELIABILITY METER ---------- */
+  .relbar { background: var(--ink); border: 1px solid var(--line); padding: 24px 22px; --bracket: var(--amber); }
+  .relbar .rh { font-family: var(--display); font-size: 17px; text-transform: uppercase; letter-spacing: .02em; }
+  .track { position: relative; height: 50px; margin: 42px 0 12px; border: 1px solid var(--line-hi);
+    background: linear-gradient(90deg, #5b1d1d 0%, #7a3b14 28%, #6e5113 50%, #3f6018 72%, #16431f 100%); }
+  .track .tick { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(255,255,255,.4); }
+  .track .mark { position: absolute; top: -22px; transform: translateX(-50%); font-family: var(--mono); font-size: 11px; color: var(--fg); white-space: nowrap; }
+  .track .you { position: absolute; top: -44px; transform: translateX(-50%); font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--amber); white-space: nowrap; text-align: center; }
+  .track .you::after { content: "▼"; display: block; color: var(--amber); margin-top: 1px; animation: bob 2.4s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(4px); } }
+  .scale { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10.5px; color: var(--fg-faint); text-transform: uppercase; letter-spacing: .08em; }
+
+  /* ---------- RECOMMENDED PATH ---------- */
+  .path { display: flex; align-items: stretch; flex-wrap: wrap; gap: 0; border: 1px solid var(--line-hi); background: linear-gradient(180deg, rgba(176,111,12,.06), transparent), var(--ink); --bracket: var(--amber); }
+  html[data-theme="dark"] .path { background: linear-gradient(180deg, rgba(255,176,0,.05), transparent), var(--ink); }
+  .path .seg { flex: 1; min-width: 138px; padding: 18px 14px; text-align: center; position: relative; }
+  .path .seg:not(:last-child)::after { content: "›"; position: absolute; right: -7px; top: 50%; transform: translateY(-50%); color: var(--amber); font-size: 22px; z-index: 2; }
+  .path .k { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .16em; color: var(--amber); }
+  .path .v { font-family: var(--display); font-size: 17px; text-transform: uppercase; margin-top: 4px; }
+  .path .s { font-family: var(--mono); font-size: 10.5px; color: var(--fg-dim); }
+
+  /* ---------- CHECKLIST ---------- */
+  .checks { display: grid; grid-template-columns: repeat(auto-fit, minmax(288px, 1fr)); gap: 11px; }
+  .check { display: flex; gap: 13px; background: var(--ink); border: 1px solid var(--line); padding: 15px; transition: border-color .2s; }
+  .check:hover { border-color: color-mix(in srgb, var(--go) 50%, var(--line)); }
+  .check .mk { color: var(--go); font-family: var(--display); font-size: 18px; line-height: 1.2; }
+  .check strong { display: block; font-family: var(--display); font-size: 14px; text-transform: uppercase; letter-spacing: .02em; }
+  .check span { color: var(--fg-dim); font-size: 12.5px; }
+
+  /* ---------- CURRENT-DIRECTION CALLOUT ---------- */
+  .direction { margin-top: 20px; padding: 16px 20px 14px; background: linear-gradient(90deg, color-mix(in srgb, var(--cyan) 9%, var(--ink)), var(--ink) 62%); border: 1px solid color-mix(in srgb, var(--cyan) 32%, var(--line)); border-left: 3px solid var(--cyan); }
+  .direction .dh { font-family: var(--mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--cyan); margin-bottom: 9px; }
+  .direction .dh::before { content: "▸ "; }
+  .direction ul { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 6px; }
+  .direction li { font-size: 13.5px; color: var(--fg-dim); padding-left: 20px; position: relative; }
+  .direction li::before { content: "→"; position: absolute; left: 0; color: var(--cyan); }
+  .direction li b { color: var(--fg); font-weight: 600; }
+
+  /* ---------- TERMINAL / COMMAND BLOCK ---------- */
+  .term { background: var(--ink-2); border: 1px solid var(--line-hi); margin: 15px 0 0; --bracket: var(--cyan); overflow: hidden; }
+  .term .term-h { display: flex; align-items: center; gap: 9px; padding: 8px 13px; border-bottom: 1px solid var(--line); background: linear-gradient(90deg, color-mix(in srgb, var(--cyan) 9%, var(--ink)), var(--ink) 70%); font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--fg-faint); }
+  .term .term-h .dotline { display: inline-flex; gap: 5px; }
+  .term .term-h .dotline i { width: 9px; height: 9px; border-radius: 50%; background: var(--line-hi); }
+  .term .term-h .ttl { color: var(--cyan); }
+  .term pre { margin: 0; padding: 15px 16px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.75; color: var(--fg); white-space: pre; -webkit-overflow-scrolling: touch; }
+  .term pre .c { color: var(--fg-faint); }
+  .term pre .p { color: var(--cyan); user-select: none; }
+  .term pre .v { color: var(--go); }
+  .term pre b  { color: var(--amber); font-weight: 600; }
+
+  /* ---------- DECISION TABLE ---------- */
+  .dtable-wrap { overflow-x: auto; border: 1px solid var(--line); }
+  .dtable { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12.5px; min-width: 560px; }
+  .dtable th { text-align: left; font-weight: 400; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--amber); padding: 11px 14px; border-bottom: 1px solid var(--line-hi); background: var(--ink); white-space: nowrap; }
+  .dtable td { padding: 13px 14px; border-bottom: 1px solid var(--line); color: var(--fg-dim); vertical-align: top; line-height: 1.5; }
+  .dtable tr:last-child td { border-bottom: none; }
+  .dtable tbody tr:hover td { background: var(--ink); }
+  .dtable .ram { color: var(--fg); font-family: var(--display); font-size: 17px; white-space: nowrap; }
+  .dtable .pick { color: var(--fg); }
+  .dtable .ref td { background: linear-gradient(90deg, color-mix(in srgb, var(--amber) 13%, transparent), transparent 78%); }
+  .dtable .ref .ram { color: var(--amber); }
+  .dtable .reftag { font-family: var(--mono); font-size: 8.5px; color: var(--bg); background: var(--amber); padding: 1px 6px; letter-spacing: .1em; text-transform: uppercase; margin-left: 8px; vertical-align: middle; white-space: nowrap; }
+
+  /* ---------- STEP TAG ---------- */
+  .step-tag { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--bg); background: var(--amber); padding: 2px 8px; }
+  .sec-head .note .step-tag { margin-right: 8px; }
+
+  /* ---------- FAST PATH ---------- */
+  .fastpath { padding: 24px 26px 26px; background: linear-gradient(180deg, color-mix(in srgb, var(--cyan) 8%, var(--ink)), var(--ink)); border: 1px solid color-mix(in srgb, var(--cyan) 35%, var(--line)); border-left: 3px solid var(--cyan); --bracket: var(--cyan); }
+  .fastpath h2 { font-size: 21px; text-transform: uppercase; margin: 0 0 5px; letter-spacing: .01em; }
+  .fastpath .fp-sub { color: var(--fg-dim); font-size: 13.5px; margin: 0; max-width: 720px; }
+
+  code { font-family: var(--mono); background: var(--ink-2); border: 1px solid var(--line); padding: 1px 6px; font-size: .88em; color: var(--amber-soft); }
+
+  footer { border-top: 1px solid var(--line); margin-top: 40px; padding: 38px 0 60px; }
+  footer .f { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; font-family: var(--mono); font-size: 11.5px; color: var(--fg-faint); text-transform: uppercase; letter-spacing: .1em; }
+  footer .f b { color: var(--amber); }
+
+  /* ---------- THEME TOGGLE ---------- */
+  .theme-toggle {
+    position: fixed; top: 15px; right: 16px; z-index: 90;
+    display: inline-flex; gap: 2px; padding: 3px;
+    background: var(--ink); border: 1px solid var(--line-hi);
+    font-family: var(--mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
+    box-shadow: 0 6px 18px -10px rgba(0,0,0,.45);
+  }
+  .theme-toggle button {
+    appearance: none; -webkit-appearance: none; background: none; border: none; cursor: pointer;
+    color: var(--fg-faint); font: inherit; letter-spacing: inherit; text-transform: inherit;
+    padding: 5px 10px; transition: color .2s, background .2s;
+  }
+  .theme-toggle button:hover { color: var(--fg); }
+  html[data-theme="light"] .theme-toggle [data-set="light"],
+  html[data-theme="dark"]  .theme-toggle [data-set="dark"] { background: var(--amber); color: var(--bg); }
+
+  /* ---------- MOTION: staggered reveal (safe without JS) ---------- */
+  .js .reveal { opacity: 0; transform: translateY(20px); }
+  .js .reveal.in { opacity: 1; transform: none; transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
+  .js .reveal.in .layer, .js .reveal.in .card, .js .reveal.in .node, .js .reveal.in .step, .js .reveal.in .seg, .js .reveal.in .check { animation: rise .6s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i, 0) * 55ms); }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  header.hero .reveal-now { animation: rise .8s cubic-bezier(.2,.7,.2,1) both; }
+  header.hero .e1 { animation-delay: .05s; } header.hero .e2 { animation-delay: .18s; }
+  header.hero .e3 { animation-delay: .32s; } header.hero .e4 { animation-delay: .46s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+    .js .reveal { opacity: 1 !important; transform: none !important; }
+  }
+  @media (max-width: 760px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .layer { grid-template-columns: 64px 1fr; }
+    .chips { grid-column: 1 / -1; justify-content: flex-start; max-width: none; }
+    .versus { grid-template-columns: 1fr; } .vs { height: 30px; }
+    .sec-head .note { display: none; }
+  }
+</style>
+<script>
+  /* set theme before paint — default light, honor saved choice. No flash. */
+  (function () {
+    try { var t = localStorage.getItem('las-theme'); document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light'); }
+    catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+  })();
+</script>
+</head>
+<body>
+
+<div class="theme-toggle" role="group" aria-label="Color theme">
+  <button type="button" data-set="light" aria-label="Light theme">☀ Light</button>
+  <button type="button" data-set="dark" aria-label="Dark theme">◐ Dark</button>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow reveal-now e1">localAI // run an agent on your own machine · rev 2026.06</div>
+        <h1 class="title reveal-now e2">Local<br>Agent <span class="warm">Stack</span><span class="cursor">_</span></h1>
+        <p class="lede reveal-now e3">Run a capable AI <b>agent</b> entirely on your own computer — no cloud, no API key, nothing leaving your machine. This page is the build, silicon to task: <b>size your hardware, serve a model, point an agent at it.</b> Five steps, copy-paste commands, any laptop.</p>
+      </div>
+      <div class="spec framed reveal-now e4">
+        <div class="spec-h"><span>◢ reference build</span><span>OFFLINE</span></div>
+        <dl>
+          <dt>Host</dt><dd>8–16 GB+ RAM</dd>
+          <dt>Runtime</dt><dd>Ollama / llama.cpp</dd>
+          <dt>Endpoint</dt><dd>localhost:11434</dd>
+          <dt>Model</dt><dd>Qwen3 · Gemma · Llama</dd>
+          <dt>Quant</dt><dd>Q4_K_M · 4-bit</dd>
+          <dt>Format</dt><dd>GGUF</dd>
+          <dt>Network</dt><dd><span class="ok">none required</span></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ===== FAST PATH ===== -->
+  <section class="fastpath framed reveal" style="margin-top:34px">
+    <h2 class="display">The 60-second version</h2>
+    <p class="fp-sub">Impatient? On a Mac with <a href="https://ollama.com">Ollama</a>, this is the whole thing. The rest of the page explains every choice so you can adapt it to your machine and your task.</p>
+    <div class="term">
+      <div class="term-h"><span class="dotline"><i></i><i></i><i></i></span><span class="ttl">zero → local agent</span><span style="margin-left:auto">bash</span></div>
+<pre><span class="c"># 1 · install the runtime  (Linux: curl -fsSL https://ollama.com/install.sh | sh)</span>
+<span class="p">$</span> brew install ollama && ollama serve
+
+<span class="c"># 2 · pull a model that fits your RAM — 8GB→:4b, 16GB→:8b, 32GB→:14b</span>
+<span class="p">$</span> ollama pull <b>qwen3:8b</b>
+
+<span class="c"># 3 · sanity-check it  (also serves an OpenAI API at localhost:11434/v1)</span>
+<span class="p">$</span> ollama run qwen3:8b <span class="v">"Reply with one word: ready"</span>
+
+<span class="c"># 4 · run a real agent on it — here, a coding agent</span>
+<span class="p">$</span> pip install aider-chat
+<span class="p">$</span> export OLLAMA_API_BASE=http://127.0.0.1:11434
+<span class="p">$</span> aider --model <b>ollama_chat/qwen3:8b</b></pre>
+    </div>
+  </section>
+
+  <!-- ===== STACK ===== -->
+  <section class="reveal">
+    <div class="sec-head"><span class="sec-no">§01</span><h2>The Stack</h2><span class="note">request flows down · tokens flow up</span></div>
+    <p class="sec-sub">Six layers stand between your silicon and the task you care about — and each one is swappable. The rest of this page builds the whole column in <b>five steps</b>, bottom to top. The colour warms as you climb.</p>
+    <div class="stack">
+      <div class="layer" style="--accent: var(--t-hw); --i:0"><div class="num">0<small>HARDWARE</small></div><div><div class="ttl">Hardware</div><div class="desc">Unified memory is the real budget. A quantized 9B fits comfortably in 16&nbsp;GB.</div></div><div class="chips"><span class="chip hi">Apple Silicon 16GB</span><span class="chip">consumer GPU</span></div></div>
+      <div class="layer" style="--accent: var(--t-rt); --i:1"><div class="num">1<small>RUNTIME</small></div><div><div class="ttl">Runtime <span class="role">serves model</span></div><div class="desc">Loads weights, exposes an <b>OpenAI-compatible HTTP API</b> — e.g. <code>llama-server</code>, MLX, Ollama.</div></div><div class="chips"><span class="chip hi">llama.cpp</span><span class="chip hi">MLX</span><span class="chip">Ollama</span><span class="chip">LM Studio</span><span class="chip">vLLM</span></div></div>
+      <div class="layer" style="--accent: var(--t-md); --i:2"><div class="num">2<small>MODEL</small></div><div><div class="ttl">Model <span class="role">the brain</span></div><div class="desc">Open weights in <code>GGUF</code>, quantized to fit. Tool-call reliability lives <b>here</b>, not in the harness.</div></div><div class="chips"><span class="chip hi">Qwen3 8B</span><span class="chip">Gemma 3</span><span class="chip">Q4_K_M</span></div></div>
+      <div class="layer" style="--accent: var(--t-pr); --i:3"><div class="num">3<small>PROTOCOL</small></div><div><div class="ttl">Protocol <span class="role">the contract</span></div><div class="desc">The lingua franca every harness speaks: chat completions, function calling, and increasingly <b>MCP</b>.</div></div><div class="chips"><span class="chip hi">/v1/chat/completions</span><span class="chip">tool calling</span><span class="chip">MCP</span></div></div>
+      <div class="layer" style="--accent: var(--t-ag); --i:4"><div class="num">4<small>HARNESS</small></div><div><div class="ttl">Agent Harness <span class="role">the loop</span></div><div class="desc">Turns one-shot chat into <b>plan → act → observe</b>. Picks tools, runs them, feeds results back.</div></div><div class="chips"><span class="chip">Qwen-Agent</span><span class="chip">smolagents</span><span class="chip">Pi</span><span class="chip">Goose</span></div></div>
+      <div class="layer" style="--accent: var(--t-tk); --i:5"><div class="num">5<small>TASK</small></div><div><div class="ttl">Task <span class="role">the point</span></div><div class="desc">What you actually want done. Each task shape favors a different harness.</div></div><div class="chips"><span class="chip hi">data analytics</span><span class="chip">coding</span><span class="chip">research</span></div></div>
+    </div>
+    <div class="ramp-key"><span>cool · deep</span><span class="ramp-bar"></span><span>warm · high</span></div>
+  </section>
+
+  <!-- ===== FLOW ===== -->
+  <section class="reveal">
+    <div class="sec-head"><span class="sec-no">§02</span><h2>One Round Trip</h2><span class="note">your data never enters the prompt</span></div>
+    <p class="sec-sub">Here's what one agent step looks like once it's all running. The harness sends <em>instructions</em>, not your data; the model emits a tool call (or code); the harness runs it locally and feeds only the result back.</p>
+    <div class="flow">
+      <div class="node" style="--i:0"><div class="ic">🧑</div><div class="nm">Prompt</div><div class="sub">goal + tools</div></div>
+      <div class="node" style="--i:1"><div class="ic">🔁</div><div class="nm">Harness</div><div class="sub">build messages</div></div>
+      <div class="node" style="--i:2"><div class="ic">🔌</div><div class="nm">API</div><div class="sub">localhost/v1</div></div>
+      <div class="node" style="--i:3"><div class="ic">⚙️</div><div class="nm">Runtime</div><div class="sub">Ollama / llama.cpp</div></div>
+      <div class="node" style="--i:4"><div class="ic">🧠</div><div class="nm">Model</div><div class="sub">your local LLM</div></div>
+      <div class="node" style="--i:5"><div class="ic">🛠️</div><div class="nm">Tool/Code</div><div class="sub">runs local</div></div>
+      <div class="node" style="--i:6"><div class="ic">👁️</div><div class="nm">Observe</div><div class="sub">result back</div></div>
+    </div>
+  </section>
+
+  <!-- ===== STEP 1 · HARDWARE ===== -->
+  <section class="reveal">
+    <div class="sec-head"><span class="sec-no">§03</span><h2>Size Your Machine</h2><span class="note"><span class="step-tag">Step 1</span>the memory budget</span></div>
+    <p class="sec-sub">Everything above rents space in your memory. <b>The model's weights have to fit in RAM</b> (or GPU VRAM) alongside its context — so your memory <em>is</em> the size of model you can run. Find your tier; it decides everything downstream.</p>
+    <div class="dtable-wrap framed">
+      <table class="dtable">
+        <thead><tr><th>Your RAM / VRAM</th><th>Model class · 4-bit</th><th>Good picks</th><th>What to expect</th></tr></thead>
+        <tbody>
+          <tr><td class="ram">8 GB</td><td class="pick">3–4B · ~2–3 GB</td><td>Qwen3 4B · Llama 3.2 3B · Gemma 3 4B</td><td>Snappy chat and simple single-tool calls. Real agent loops are a stretch.</td></tr>
+          <tr class="ref"><td class="ram">16 GB<span class="reftag">reference</span></td><td class="pick">7–9B · ~5–6 GB</td><td>Qwen3 8B · Gemma 3 12B (tight)</td><td>The sweet spot — reliable single / few-tool agents at ~10–15 tok/s on Apple Silicon.</td></tr>
+          <tr><td class="ram">24–32 GB</td><td class="pick">14–32B · ~9–20 GB</td><td>Qwen3 14B / 32B · Gemma 3 27B</td><td>Multi-step loops get genuinely reliable, with headroom for long context.</td></tr>
+          <tr><td class="ram">64 GB+</td><td class="pick">30–70B · MoE</td><td>Qwen3 30B-A3B · Llama 3.3 70B</td><td>Approaching frontier quality for many tasks — still fully local.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid cols-3" style="margin-top:13px">
+      <div class="card" style="--i:0"><span class="role">the budget</span><h3><span class="dot" style="color:var(--t-hw)"></span>RAM = ceiling</h3><p>On Apple Silicon, CPU + GPU share one <b>unified memory</b> pool, so a 4-bit 9B fits in 16 GB with room for context. On a PC, your <b>GPU VRAM</b> is the real budget; CPU-only works but runs slowly.</p></div>
+      <div class="card" style="--i:1"><span class="role">how it fits</span><h3><span class="dot" style="color:var(--t-hw)"></span>Quantization</h3><p>4-bit (<code>Q4_K_M</code>) shrinks a 9B from ~18 GB to ~5–6 GB for a small quality cost. It's the default sweet spot — start here; only climb to Q5/Q6 if you have spare RAM.</p></div>
+      <div class="card" style="--i:2"><span class="role">the speed cap</span><h3><span class="dot" style="color:var(--t-hw)"></span>Bandwidth</h3><p>Tokens/sec is bound by <b>memory bandwidth</b>, not raw compute — a bigger model moves more bytes per token, so it runs slower. Leave ~2–4 GB free for the OS.</p></div>
+    </div>
+  </section>
+
+  <!-- ===== STEP 2 · RUNTIME ===== -->
+  <section class="reveal">
+    <div class="sec-head"><span class="sec-no">§04</span><h2>Install a Runtime</h2><span class="note"><span class="step-tag">Step 2</span>serve the model over HTTP</span></div>
+    <p class="sec-sub">The runtime loads the weights and exposes them as an <b>OpenAI-compatible HTTP API</b> — so any agent can talk to it, and you can swap models without touching anything above. Pick one; they all speak the same protocol.</p>
+    <div class="grid cols-3">
+      <div class="card featured" style="--i:0"><div class="card-top"><span class="role">recommended · easiest</span><span class="ribbon">start here</span></div><h3><span class="dot" style="color:var(--t-rt)"></span>Ollama</h3><p>One binary, every OS, a built-in model library. <code>ollama pull</code> &amp; <code>ollama run</code> and you're done. Serves an OpenAI API at <code>:11434/v1</code>.</p></div>
+      <div class="card" style="--i:1"><span class="role">GUI · no terminal</span><h3><span class="dot" style="color:var(--t-rt)"></span>LM Studio</h3><p>A desktop app: search a model, click download, flip on <b>Local Server</b>. Runs both GGUF and MLX. Best if you'd rather not touch a shell. Serves at <code>:1234/v1</code>.</p></div>
+      <div class="card" style="--i:2"><span class="role">most control</span><h3><span class="dot" style="color:var(--t-rt)"></span>llama.cpp</h3><p>The lean engine under the hood of most others. <code>llama-server</code> gives you GBNF grammars, KV-cache tuning and <code>--jinja</code> tool parsing. What this repo standardizes on. Serves at <code>:8080/v1</code>.</p></div>
+    </div>
+    <div class="term">
+      <div class="term-h"><span class="dotline"><i></i><i></i><i></i></span><span class="ttl">install + serve</span><span style="margin-left:auto">bash</span></div>
+<pre><span class="c"># ── Ollama (recommended) ──────────────────────────────</span>
+<span class="p">$</span> brew install ollama                              <span class="c"># macOS · or download the app</span>
+<span class="p">$</span> curl -fsSL https://ollama.com/install.sh | sh   <span class="c"># Linux</span>
+<span class="p">$</span> ollama serve                                     <span class="c"># now live at localhost:11434</span>
+
+<span class="c"># ── llama.cpp (more control) ──────────────────────────</span>
+<span class="p">$</span> brew install llama.cpp                           <span class="c"># or build from source</span>
+<span class="p">$</span> llama-server -hf <b>bartowski/Qwen3-8B-GGUF:Q4_K_M</b> --jinja --ctx-size 16384 --port 8080</pre>
+    </div>
+    <p style="color:var(--fg-dim); font-size:13px; margin-top:14px"><b>Windows:</b> Ollama and LM Studio both ship native installers. <b>On Apple Silicon</b>, MLX (<code>mlx_lm.server</code>) decodes ~20–30% faster if you want it. <b>Scaling past a laptop?</b> vLLM does GPU-first batched serving. The key point either way: everything above only sees <code>http://localhost:&lt;port&gt;/v1</code>, so you can switch runtimes later for free.</p>
+  </section>
+
+  <!-- ===== STEP 3 · MODEL ===== -->
+  <section class="reveal">
+    <div class="sec-head"><span class="sec-no">§05</span><h2>Pick &amp; Pull a Model</h2><span class="note"><span class="step-tag">Step 3</span>where capability lives</span></div>
+    <p class="sec-sub">The open weights themselves, in <code>GGUF</code>, quantized to your tier from Step 1. One thing matters most for agents: <b>tool-call reliability is a property of the model</b>, not the harness above it. These families are the safe bets.</p>
+    <div class="grid cols-3">
+      <div class="card featured" style="--i:0"><div class="card-top"><span class="role">best small tool-caller</span><span class="ribbon">default</span></div><h3><span class="dot" style="color:var(--t-md)"></span>Qwen3</h3><p>0.6B → 235B incl. MoE. Tool template baked in, strong structured-output fidelity — the most reliable small open tool-caller. <code>qwen3:8b</code> is the 16 GB default.</p></div>
+      <div class="card" style="--i:1"><span class="role">strong all-rounder</span><h3><span class="dot" style="color:var(--t-md)"></span>Gemma 3</h3><p>1B / 4B / 12B / 27B dense. Native function calling, system prompts, long context, vision on the bigger ones. <code>gemma3:12b</code> on 16 GB (tight), <code>gemma3:4b</code> on 8 GB.</p></div>
+      <div class="card" style="--i:2"><span class="role">specialists</span><h3><span class="dot" style="color:var(--t-md)"></span>Coder · Llama</h3><p><code>qwen2.5-coder</code> (1.5–32B) is the local coding pick; <code>llama3.1:8b</code> / <code>llama3.3:70b</code> are solid general tool-callers when you have the RAM.</p></div>
+    </div>
+    <div class="term">
+      <div class="term-h"><span class="dotline"><i></i><i></i><i></i></span><span class="ttl">pull a model</span><span style="margin-left:auto">bash</span></div>
+<pre><span class="c"># Ollama — picks a sane 4-bit quant for you</span>
+<span class="p">$</span> ollama pull <b>qwen3:8b</b>      <span class="c"># 16 GB · the default agent model</span>
+<span class="p">$</span> ollama pull qwen3:4b      <span class="c"># 8 GB</span>
+<span class="p">$</span> ollama pull qwen3:14b     <span class="c"># 32 GB   (use the newest tag your library lists)</span>
+
+<span class="c"># llama.cpp — pull a specific GGUF quant straight from Hugging Face</span>
+<span class="p">$</span> llama-server -hf <b>bartowski/Qwen3-8B-GGUF:Q4_K_M</b> --jinja</pre>
+    </div>
+    <div class="relbar framed" style="margin-top:16px">
+      <div class="rh">Tool-calling reliability scales hard with model size</div>
+      <div class="track">
+        <div class="tick" style="left:23.3%"></div><div class="mark" style="left:23.3%">7B ≈ 71%</div>
+        <div class="tick" style="left:46.6%"></div><div class="mark" style="left:46.6%">14B+ multi-step</div>
+        <div class="tick" style="left:80%"></div><div class="mark" style="left:80%">32B+ ≈ 80%</div>
+        <div class="you" style="left:30%">9B class</div>
+      </div>
+      <div class="scale"><span>&lt;7B · falls off a cliff</span><span>BFCL-style accuracy →</span><span>near GPT-4o</span></div>
+      <p style="color:var(--fg-dim); font-size:13px; margin:16px 0 0">The single most useful fact on this page: a <b>7–9B is the floor</b> for usable agents — reliable for single / few-tool steps, marginal for long autonomous loops. <b>Below ~7B no harness can save it</b>, so don't fight a too-small model. Bigger RAM tier → bigger model → more reliable loops.</p>
+    </div>
+    <div class="direction">
+      <div class="dh">Worth knowing</div>
+      <ul>
+        <li><b>Quant:</b> start at <code>Q4_K_M</code>. Drop to <code>IQ4_XS</code> if it's tight; rise to <code>Q5_K_M</code> / <code>Q6</code> only with spare RAM.</li>
+        <li><b>MoE</b> (e.g. <code>qwen3:30b-a3b</code>) gives big-model quality at small-model speed — if you have 32 GB+ to hold all the experts.</li>
+        <li><b>Reasoning models</b> (DeepSeek-R1 distills) can fight agent harnesses — keep "thinking" off for tool use, or expect leaked traces.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== STEP 4 · VERIFY ===== -->
+  <section class="reveal">
+    <div class="sec-head"><span class="sec-no">§06</span><h2>Verify It Works</h2><span class="note"><span class="step-tag">Step 4</span>the shared contract</span></div>
+    <p class="sec-sub">Before wiring an agent, confirm two things over the API the runtime exposes: the model <b>answers</b>, and — the one that actually matters for agents — it <b>emits a valid tool call</b>. That contract (<code>/v1/chat/completions</code> with <code>tools</code>) is exactly why any harness can talk to any runtime.</p>
+    <div class="term">
+      <div class="term-h"><span class="dotline"><i></i><i></i><i></i></span><span class="ttl">smoke-test the endpoint</span><span style="margin-left:auto">bash</span></div>
+<pre><span class="c"># 1 · does it answer?</span>
+<span class="p">$</span> curl localhost:11434/v1/chat/completions -H 'Content-Type: application/json' -d '{
+    "model": "qwen3:8b",
+    "messages": [{"role":"user","content":"reply with one word: ready"}]
+  }'
+
+<span class="c"># 2 · does it emit a tool_call?  ← the real agent-readiness test</span>
+<span class="p">$</span> curl localhost:11434/v1/chat/completions -H 'Content-Type: application/json' -d '{
+    "model": "qwen3:8b",
+    "messages": [{"role":"user","content":"What is 19*23? Use the tool."}],
+    "tools": [{"type":"function","function":{
+      "name":"calc","description":"evaluate math",
+      "parameters":{"type":"object","properties":{"expr":{"type":"string"}}}}}]
+  }'
+<span class="c"># ✓ look for "tool_calls" in the response — not a number in the text</span></pre>
+    </div>
+    <div class="grid cols-3" style="margin-top:14px">
+      <div class="card" style="--i:0"><span class="role">the baseline</span><h3><span class="dot" style="color:var(--t-pr)"></span>Chat + tools</h3><p><code>/v1/chat/completions</code> with <code>tools</code> / <code>tool_calls</code> — the OpenAI-compatible lingua franca every layer here speaks.</p></div>
+      <div class="card" style="--i:1"><span class="role">the safety net</span><h3><span class="dot" style="color:var(--t-pr)"></span>Structured output</h3><p>JSON-schema responses and <b>GBNF grammars</b> force generation into a valid shape at decode time. If a small model emits messy JSON, this is the fix.</p></div>
+      <div class="card" style="--i:2"><span class="role">tools &amp; data</span><h3><span class="dot" style="color:var(--t-pr)"></span>MCP</h3><p>Model Context Protocol: a standard socket for tools and data. Write a tool once, plug it into any MCP-aware agent (next step).</p></div>
+    </div>
+    <p style="color:var(--fg-dim); font-size:13px; margin-top:14px">No <code>tool_calls</code> in the response? Make sure tool parsing is on (<code>--jinja</code> on llama.cpp; on by default in Ollama for tool-capable models) and that your model is one of the tool-callers from Step 3 — not every GGUF supports it.</p>
+  </section>
+
+  <!-- ===== LAYER 4 GROUP BAND ===== -->
+  <div class="layer-band reveal">
+    <span class="lb-no">4</span>
+    <span class="lb-ttl">The Harness Layer</span>
+    <span class="lb-sub">§07–§09 · what an agent loop is · how to run one · and the shelf to pick yours from</span>
+  </div>
+
+  <!-- ===== AGENT LOOP ===== -->
+  <section class="reveal">
+    <div class="sec-head"><span class="sec-no">§07</span><h2>The Agent Loop</h2><span class="note">harness · what the loop is</span></div>
+    <p class="sec-sub">A plain chat call answers once. A harness wraps it in a loop, lets the model <em>act</em> through tools, and feeds the world's response back — until it decides it's done.</p>
+    <div class="loop">
+      <div class="step" style="--i:0"><div class="lbl">Goal</div><div class="d">task + tools</div></div>
+      <div class="step" style="--i:1"><div class="lbl">Plan</div><div class="d">decide next move</div></div>
+      <div class="step" style="--i:2"><div class="lbl">Act</div><div class="d">tool call / code</div></div>
+      <div class="step" style="--i:3"><div class="lbl">Observe</div><div class="d">result + errors</div></div>
+      <div class="step" style="--i:4"><div class="lbl">Answer</div><div class="d">when complete</div></div>
+    </div>
+    <div class="loop-back">↺ plan → act → observe repeats until the model emits a final answer</div>
+  </section>
+
+  <!-- ===== STEP 5 · RUN AN AGENT ===== -->
+  <section class="reveal" id="run">
+    <div class="sec-head"><span class="sec-no">§08</span><h2>Run an Agent</h2><span class="note"><span class="step-tag">Step 5</span>point a harness at your endpoint</span></div>
+    <p class="sec-sub">The payoff. A harness wraps your model in the plan→act→observe loop and connects it to real tools. Install one, point it at your <code>localhost</code> endpoint, and go. Its biggest design choice — and what to match to a small model — is <b>how the loop acts</b>.</p>
+
+    <div class="tag" style="margin:6px 0 12px">— the action mechanism · two paradigms</div>
+    <div class="versus">
+      <div class="pane win framed"><span class="badge-win">▲ better for small / open models</span><h3 style="margin-top:8px">Code-as-Action</h3><div class="tagline">model writes &amp; runs Python</div><ul><li>Plays to a model's strongest skill: writing code</li><li><b>Is</b> data analytics — load, transform, plot</li><li>One code block replaces many tool calls</li><li>smolagents · Qwen-Agent · Open Interpreter</li><li>Needs a sandbox to run the code</li></ul></div>
+      <div class="vs">VS</div>
+      <div class="pane"><span class="badge-win" style="color:var(--fg-faint)">structured · auditable</span><h3 style="margin-top:8px">JSON Tool-Calling</h3><div class="tagline">model emits structured calls</div><ul><li>Clean, typed, easy to validate &amp; audit</li><li>"Consistently weaker" on open models</li><li>Small models emit malformed JSON — the #1 failure</li><li>Aider · Goose · Pydantic AI</li><li>Force validity with <b>GBNF grammars</b></li></ul></div>
+    </div>
+    <p style="color:var(--fg-dim); font-size:13px; margin-top:15px; text-align:center">Not strictly either/or — a common hybrid is JSON tool-calling where one tool is <code>run_python</code>, giving you code-as-action <em>as a tool</em>.</p>
+
+    <p class="sec-sub" style="margin:30px 0 14px">Three recipes that work today against the endpoint from Step 2 — pick by what you want to do:</p>
+    <div class="term">
+      <div class="term-h"><span class="dotline"><i></i><i></i><i></i></span><span class="ttl">install + run an agent</span><span style="margin-left:auto">bash</span></div>
+<pre><span class="c"># ── CODING · Aider (git-native pair programmer) ───────</span>
+<span class="p">$</span> pip install aider-chat
+<span class="p">$</span> export OLLAMA_API_BASE=http://127.0.0.1:11434
+<span class="p">$</span> aider --model <b>ollama_chat/qwen3:8b</b>
+
+<span class="c"># ── DATA / CODE-AS-ACTION · smolagents (Python) ───────</span>
+<span class="p">$</span> pip install smolagents litellm
+<span class="p">$</span> python - <span class="v">&lt;&lt;'PY'</span>
+<span class="v">from smolagents import CodeAgent, LiteLLMModel</span>
+<span class="v">m = LiteLLMModel("ollama_chat/qwen3:8b", api_base="http://127.0.0.1:11434")</span>
+<span class="v">CodeAgent(tools=[], model=m, additional_authorized_imports=["pandas","matplotlib"]).run(</span>
+<span class="v">    "Load sales.csv and chart revenue by month")</span>
+<span class="v">PY</span>
+
+<span class="c"># ── GENERAL · Open WebUI (ChatGPT-style UI + tools) ───</span>
+<span class="p">$</span> pip install open-webui && open-webui serve     <span class="c"># → localhost:8080, finds Ollama</span></pre>
+    </div>
+    <p style="color:var(--fg-dim); font-size:13px; margin-top:14px">All three only need the OpenAI-compatible URL from Step 2 — swap <code>qwen3:8b</code> for whatever you pulled, or point <code>api_base</code> at <code>:8080</code> (llama.cpp) / <code>:1234</code> (LM Studio).</p>
+  </section>
+
+  <!-- ===== §09 · THE SHELF · BY TASK ===== -->
+  <section class="reveal">
+    <div class="sec-head"><span class="sec-no">§09</span><h2>The Shelf · Pick by Task</h2><span class="note">harness · the options</span></div>
+    <p class="sec-sub">The recipes above are starting points. The shape of <em>your</em> task decides the harness — and how much autonomy a small model can be trusted with. <span style="color:var(--amber)">●</span> = wired up in this repo.</p>
+    <div class="plegend">
+      <span><span class="ptag code">code</span>writes &amp; runs code</span>
+      <span><span class="ptag json">json</span>structured tool calls</span>
+      <span><span class="ptag hybrid">hybrid</span>tools incl. run-code</span>
+      <span><span class="ptag edit">edit</span>diff edit-format</span>
+    </div>
+
+    <div class="tag" style="margin:6px 0 11px">— data &amp; analytics · <span style="color:var(--fg-dim)">code-as-action shines</span></div>
+    <div class="grid cols-4">
+      <div class="card" style="--i:0"><span class="role">Qwen-native · interpreter ●</span><h3>Qwen-Agent <span class="ptag hybrid">hybrid</span></h3><p>Built for Qwen. Native Code Interpreter (analysis + viz), function calling, MCP, RAG. Handles Qwen's tool templates for you.</p></div>
+      <div class="card" style="--i:1"><span class="role">code-as-action</span><h3>smolagents <span class="ptag code">code</span></h3><p>~1k lines, CodeAct-first, model-agnostic. The hackable way to build a data-analyst agent.</p></div>
+      <div class="card" style="--i:2"><span class="role">code interpreter</span><h3>Open Interpreter <span class="ptag code">code</span></h3><p>Turnkey "run code on my data" locally. Sandbox it — it executes eagerly.</p></div>
+      <div class="card" style="--i:3"><span class="role">CSV / SQL</span><h3>PandasAI · Vanna <span class="ptag code">code</span></h3><p>NL→pandas and NL→SQL. Purpose-built analytics, fully offline.</p></div>
+    </div>
+
+    <div class="tag" style="margin:20px 0 11px">— coding · <span style="color:var(--fg-dim)">read repo, edit files, run tests</span></div>
+    <div class="grid cols-4">
+      <div class="card" style="--i:0"><span class="role">git diffs</span><h3>Aider <span class="ptag edit">edit</span></h3><p>Mature, git-native pair programmer. On small models use <code>--edit-format whole</code>. The easiest coding start.</p></div>
+      <div class="card" style="--i:1"><span class="role">CLI coding agent ●</span><h3>Pi <span class="ptag json">json</span></h3><p>&lt;1k-token prompt, 4 tools — the lightest harness, ideal for a tight local context budget. Wired in this repo.</p></div>
+      <div class="card" style="--i:2"><span class="role">supervised IDE</span><h3>Cline / Roo / Kilo <span class="ptag json">json</span></h3><p>VS Code family with per-step approval — a safety net for weaker models.</p></div>
+      <div class="card" style="--i:3"><span class="role">minimal terminal</span><h3>gptme <span class="ptag code">code</span></h3><p>Terminal agent with a stateful Python tool. Low-overhead local fit.</p></div>
+    </div>
+
+    <div class="tag" style="margin:20px 0 11px">— general assistant &amp; tools · <span style="color:var(--fg-dim)">connect data, run errands</span></div>
+    <div class="grid cols-4">
+      <div class="card" style="--i:0"><span class="role">MCP-native</span><h3>Goose <span class="ptag json">json</span></h3><p>Block's agent with thousands of MCP extensions. Add SQL / web / file tools without writing code. Strong general pick.</p></div>
+      <div class="card" style="--i:1"><span class="role">chat UI + tools</span><h3>Open WebUI <span class="ptag json">json</span></h3><p>ChatGPT-style local UI over Ollama, with functions, RAG and MCP. Friendliest for non-coders.</p></div>
+      <div class="card" style="--i:2"><span class="role">typed &amp; safe</span><h3>Pydantic AI <span class="ptag json">json</span></h3><p>Type-safe tools, schema validation + self-correction retries. Best for structured pipelines.</p></div>
+      <div class="card" style="--i:3"><span class="role">structured output</span><h3>Instructor <span class="ptag json">json</span></h3><p>Lightest layer to coerce output into validated JSON. A component, not a loop.</p></div>
+    </div>
+
+    <div class="direction" style="margin-top:22px">
+      <div class="dh">A small model's comfort zone</div>
+      <ul>
+        <li><b>Great:</b> data analytics (it's just code), focused file edits, structured extraction, RAG over your own docs.</li>
+        <li><b>Workable, supervised:</b> multi-file coding in 5–8 step bursts with per-step approval (Cline / Aider).</li>
+        <li><b>Hard locally:</b> long autonomous loops, and <b>computer-use</b> (driving a browser/OS from screenshots) need ≥32B. Research needs a real search tool, or the model will confidently make things up.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== CROSS-CUTTING ===== -->
+  <section class="reveal">
+    <div class="sec-head"><span class="sec-no">§10</span><h2>Make It Reliable</h2><span class="note">levers that span the layers</span></div>
+    <p class="sec-sub">No single layer makes a small model reliable — these levers cut across several at once.</p>
+    <div class="checks">
+      <div class="check" style="--i:0"><div class="mk">✓</div><div><strong>Constrain the output</strong><span>GBNF grammars / JSON-schema decoding force valid tool calls at generation time. <em>(runtime + protocol)</em></span></div></div>
+      <div class="check" style="--i:1"><div class="mk">✓</div><div><strong>Match the tool template</strong><span>Enable the model's tool parser in the runtime (e.g. <code>--jinja</code> for Hermes-style Qwen). <em>(runtime + model)</em></span></div></div>
+      <div class="check" style="--i:2"><div class="mk">✓</div><div><strong>Keep the prompt small</strong><span>A small model has little context to spare — minimal system prompt, few tools. <em>(harness)</em></span></div></div>
+      <div class="check" style="--i:3"><div class="mk">✓</div><div><strong>Repair &amp; retry</strong><span>Parse-fix malformed calls; feed tracebacks back so the model self-corrects. <em>(harness)</em></span></div></div>
+      <div class="check" style="--i:4"><div class="mk">✓</div><div><strong>Keep data out of the prompt</strong><span>Pass schema + a few sample rows; let code crunch the full dataset. <em>(task + harness)</em></span></div></div>
+      <div class="check" style="--i:5"><div class="mk">✓</div><div><strong>Bump ctx, cap horizon</strong><span>16–32k context for real loops; keep tasks to 5–8 supervised steps. <em>(hardware + task)</em></span></div></div>
+    </div>
+  </section>
+
+  <!-- ===== §11 · RECAP PATH ===== -->
+  <section class="reveal">
+    <div class="sec-head"><span class="sec-no">§11</span><h2>The Whole Path</h2><span class="note">zero → working local agent</span></div>
+    <p class="sec-sub">Five steps. If you remember only one thing: match the <b>model size to your RAM</b> — that sets the ceiling on everything above it.</p>
+    <div class="path framed">
+      <div class="seg"><div class="k">Step 1</div><div class="v">Size</div><div class="s">RAM → model class</div></div>
+      <div class="seg"><div class="k">Step 2</div><div class="v">Runtime</div><div class="s">Ollama / llama.cpp</div></div>
+      <div class="seg"><div class="k">Step 3</div><div class="v">Model</div><div class="s">qwen3 @ 4-bit</div></div>
+      <div class="seg"><div class="k">Step 4</div><div class="v">Verify</div><div class="s">answers + tool_call</div></div>
+      <div class="seg"><div class="k">Step 5</div><div class="v">Agent</div><div class="s">harness → endpoint</div></div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="f">
+      <span>localAI · <b>run an agent on your own machine</b></span>
+      <span>size → runtime → model → verify → agent</span>
+      <span>100% local · <b>no cloud · no API key · no network</b></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* progressive enhancement: mark JS on, reveal on scroll. Degrades to fully visible without JS. */
+  (function () {
+    document.documentElement.classList.add('js');
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    els.forEach(function (e) { io.observe(e); });
+  })();
+
+  /* theme toggle: switch + persist */
+  (function () {
+    document.querySelectorAll('.theme-toggle button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var t = b.getAttribute('data-set');
+        document.documentElement.setAttribute('data-theme', t);
+        try { localStorage.setItem('las-theme', t); } catch (e) {}
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>

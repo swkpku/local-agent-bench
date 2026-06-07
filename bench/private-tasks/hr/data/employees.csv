@@ -1,0 +1,33 @@
+name,department,title,gender,hire_date,annual_salary,pto_accrued,pto_taken
+Alex,Ops,Analyst,F,2023-01-22,66000,12,8
+Sam,Engineering,Sr Engineer,F,2022-08-14,115000,23,17
+Jordan,Engineering,Engineer,M,2020-10-13,166000,12,3
+Taylor,Ops,Analyst,F,2019-08-23,76000,13,7
+Morgan,Sales,Sales Lead,M,2023-03-21,104000,10,11
+Casey,Sales,AE,M,2019-03-15,118000,14,8
+Riley,Engineering,Sr Engineer,F,2024-08-09,160000,24,22
+Jamie,Engineering,Engineer,M,2022-12-14,139000,19,3
+Avery,Marketing,Specialist,M,2019-12-22,64000,10,7
+Quinn,Engineering,Sr Engineer,M,2023-05-07,135000,19,12
+Drew,Engineering,Engineer,M,2022-01-25,154000,15,12
+Reese,Ops,Analyst,F,2023-10-07,74000,15,17
+Skyler,Sales,Sales Lead,F,2024-08-19,116000,24,10
+Devon,Engineering,Sr Engineer,F,2021-03-11,91000,9,4
+Harper,Engineering,Sr Engineer,F,2018-12-23,156000,23,27
+Rowan,Ops,Analyst,M,2020-07-31,94000,16,9
+Emerson,Ops,Manager,F,2020-09-06,112000,21,19
+Finley,Marketing,Specialist,M,2022-03-20,97000,13,5
+Hayden,Engineering,Staff Engineer,F,2023-12-01,153000,10,12
+Kai,Sales,AE,M,2021-03-03,119000,23,25
+Lane,Ops,Analyst,M,2019-06-22,69000,20,24
+Marlow,Engineering,Staff Engineer,F,2023-09-30,144000,24,22
+Noel,Marketing,Manager,M,2021-09-19,88000,18,5
+Oakley,Engineering,Sr Engineer,M,2019-01-17,156000,15,18
+Sage,Ops,Manager,F,2023-03-18,100000,15,13
+Person25,Engineering,Staff Engineer,M,2021-12-22,171000,15,10
+Person26,Ops,Manager,F,2023-07-12,93000,23,0
+Person27,Marketing,Manager,F,2020-06-29,139000,19,9
+Person28,Engineering,Engineer,M,2022-07-15,154000,18,5
+Person29,Marketing,Specialist,F,2019-10-30,83000,14,0
+Person30,Marketing,Specialist,M,2020-12-02,94000,21,22
+Person31,Ops,Manager,F,2024-05-13,88000,8,3

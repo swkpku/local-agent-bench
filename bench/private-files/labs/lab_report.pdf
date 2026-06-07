@@ -1,0 +1,44 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 633 >>
+stream
+BT /F1 11 Tf 14 TL 1 0 0 1 54 740 Tm
+(QUEST DIAGNOSTICS - Comprehensive Metabolic + Lipid Panel) Tj
+T* (Patient: J. Doe    Collected: 2025-11-05    Accession: 887-2231) Tj
+T* () Tj
+T* (Total Cholesterol         238   ref 125-200   HIGH) Tj
+T* (LDL Cholesterol           168   ref 0-100   HIGH) Tj
+T* (HDL Cholesterol            41   ref 40-60   ) Tj
+T* (Triglycerides             190   ref 0-150   HIGH) Tj
+T* (Glucose                    96   ref 70-99   ) Tj
+T* (HbA1c                     6.0   ref 4.0-5.6   HIGH) Tj
+T* (Vitamin D                  24   ref 30-100   LOW) Tj
+T* (TSH                       2.0   ref 0.4-4.0   ) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000000925 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+995
+%%EOF

@@ -34,7 +34,7 @@
       "hf_repo": "bartowski/Qwen_Qwen3.5-9B-GGUF:Q4_K_M",
       "model_url": "https://huggingface.co/bartowski/Qwen_Qwen3.5-9B-GGUF/resolve/main/Qwen_Qwen3.5-9B-Q4_K_M.gguf",
       "quant": "Q4_K_M",
-      "ctx_size": 8192,
+      "ctx_size": 131072,
       "max_tokens": 512,
       "temperature": 0.2,
       "top_p": 0.9,
@@ -48,13 +48,45 @@
       "hf_repo": "bartowski/Qwen_Qwen3.5-9B-GGUF:IQ4_XS",
       "model_url": "https://huggingface.co/bartowski/Qwen_Qwen3.5-9B-GGUF/resolve/main/Qwen_Qwen3.5-9B-IQ4_XS.gguf",
       "quant": "IQ4_XS",
-      "ctx_size": 8192,
+      "ctx_size": 131072,
       "max_tokens": 512,
       "temperature": 0.2,
       "top_p": 0.9,
       "thinking": "off",
       "status": "alternative",
       "notes": "Smaller/faster comparison quant if Q4_K_M is too tight."
+    },
+    "gemma-4-12b-qat": {
+      "api_model": "gemma-4-12b-qat",
+      "runtime": "llama-server",
+      "source": "url",
+      "hf_repo": "unsloth/gemma-4-12B-it-qat-GGUF",
+      "model_url": "https://huggingface.co/unsloth/gemma-4-12B-it-qat-GGUF/resolve/main/gemma-4-12B-it-qat-UD-Q4_K_XL.gguf",
+      "quant": "UD-Q4_K_XL",
+      "ctx_size": 131072,
+      "max_tokens": 512,
+      "temperature": 0.3,
+      "top_p": 0.95,
+      "top_k": 64,
+      "thinking": "off",
+      "status": "alternative",
+      "notes": "Gemma 4 QAT (quantization-aware trained, near-bf16 quality) via Unsloth's Dynamic 2.0 UD-Q4_K_XL — higher accuracy AND smaller (~6.7 GB) than Google's plain Q4_0, which Unsloth found degrades quality. Dense 12B, 256K ctx, native system role + function calling. Best Gemma fit for a 16 GB Mac. Pass --no-mmproj-auto (default here) for text-only. Sampling set to temp 0.3 for reliable tool calls (Gemma's documented chat default is temp 1.0/top_p 0.95/top_k 64 — raise temp for more creative prose). Google's official GGUF: google/gemma-4-12B-it-qat-q4_0-gguf."
+    },
+    "gemma-4-e4b-qat": {
+      "api_model": "gemma-4-e4b-qat",
+      "runtime": "llama-server",
+      "source": "url",
+      "hf_repo": "unsloth/gemma-4-E4B-it-qat-GGUF",
+      "model_url": "https://huggingface.co/unsloth/gemma-4-E4B-it-qat-GGUF/resolve/main/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+      "quant": "UD-Q4_K_XL",
+      "ctx_size": 131072,
+      "max_tokens": 512,
+      "temperature": 0.3,
+      "top_p": 0.95,
+      "top_k": 64,
+      "thinking": "off",
+      "status": "alternative",
+      "notes": "Lighter Gemma 4 QAT (Unsloth UD-Q4_K_XL, ~4.2 GB): effective 4.5B (8B total via Per-Layer Embeddings). Snappier turns / more KV headroom on a 16 GB Mac when the 12B is too tight. Google's official GGUF: google/gemma-4-E4B-it-qat-q4_0-gguf."
     },
     "local-gguf": {
       "api_model": "local-gguf",
@@ -89,6 +121,35 @@
     "curl": {
       "status": "manual",
       "notes": "Use curl examples in README for raw API checks."
+    }
+  },
+  "agents": {
+    "pi": {
+      "kind": "cli-coding-agent",
+      "package": "@earendil-works/pi-coding-agent",
+      "provider": "localai",
+      "model": "qwen3.5-9b-q4_k_m",
+      "api": "openai-completions",
+      "config_file": "~/.pi/agent/models.json",
+      "template": "agents/pi/models.json",
+      "settings_file": "~/.pi/agent/settings.json",
+      "settings_template": "agents/pi/settings.json",
+      "setup": "scripts/setup_pi.sh",
+      "run": "scripts/run_pi.sh",
+      "system_prompt": "agents/pi/system.md",
+      "notes": "Node CLI agent. Setup merges a 'localai' provider (ctx 131072 / maxTokens 4096) plus compaction (reserveTokens 4096, keepRecentTokens 49152). Run pins --provider/--model and appends agents/pi/system.md via --append-system-prompt (context-economy rules: no data-file reads, grep-first, range reads)."
+    },
+    "qwen-agent": {
+      "kind": "python-agent-framework",
+      "package": "qwen-agent",
+      "model": "qwen3.5-9b-q4_k_m",
+      "model_server": "http://127.0.0.1:8080/v1",
+      "api_key": "EMPTY",
+      "venv": ".venv",
+      "entry": "agents/qwen_agent/run.py",
+      "setup": "scripts/setup_qwen_agent.sh",
+      "run": "scripts/run_qwen_agent.sh",
+      "notes": "Python framework. The example registers a calculator tool to demo function calling."
     }
   }
 }

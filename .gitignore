@@ -1,7 +1,11 @@
 .env
 .cache/
 models/
+.venv/
 *.log
 __pycache__/
 .DS_Store
 
+# large generated benchmark fixtures (regenerate with the generators; can be tens of GB)
+bench/private-files/messages/group_chat.txt
+bench/private-files/messages/group_chats/
